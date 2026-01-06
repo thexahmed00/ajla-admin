@@ -1,6 +1,10 @@
+"use client";
 import Link from "next/link";
 import StatCard from "./components/StatCard";
 import { Conversation } from "./types/conversation";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { isAdmin } from "../lib/auth";
 
 export default function DashboardPage() {
   const conversations: Conversation[] = [
@@ -41,27 +45,38 @@ export default function DashboardPage() {
     },
   ];
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      router.replace("/login");
+    }
+  }, []);
+
   return (
-    <>
-      <h1 className="text-3xl font-semibold mb-1">Dashboard</h1>
-      <p className="text-gray-400 mb-8">
+    <div className="w-full">
+      {/* Header */}
+      <h1 className="text-2xl md:text-3xl font-semibold mb-1">
+        Dashboard
+      </h1>
+      <p className="text-sm md:text-base text-gray-400 mb-4 md:mb-6">
         Welcome to AJLA Admin Panel
       </p>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6">
         <StatCard title="Total Conversations" value="156" />
         <StatCard title="Active Vendors" value="48" />
         <StatCard title="Service Categories" value="8" />
         <StatCard title="Availability" value="24/7" />
       </div>
 
-      {/* Conversations Card */}
+      {/* Conversations */}
       <div className="rounded-2xl border border-[#2A2A2A] bg-[#161616]">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]">
-          <h2 className="text-lg font-medium">Recent Conversations</h2>
+        <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-[#2A2A2A]">
+          <h2 className="text-base md:text-lg font-medium">
+            Recent Conversations
+          </h2>
           <Link
             href="/conversations"
             className="text-sm text-[#FF7F41] hover:underline"
@@ -70,25 +85,24 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* List */}
         <div className="divide-y divide-[#2A2A2A]">
           {conversations.map((conv) => (
             <Link
               key={conv.id}
               href={`/dashboard/conversations/${conv.id}`}
-              className="block px-6 py-4 hover:bg-[#1E1E1E] transition"
+              className="block px-4 md:px-6 py-3 md:py-4 hover:bg-[#1E1E1E] transition"
             >
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <h4 className="font-medium text-white">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 space-y-1">
+                  <h4 className="font-medium text-white text-sm md:text-base">
                     {conv.userName}
                   </h4>
-                  <p className="text-sm text-gray-400 truncate max-w-md">
+                  <p className="text-xs md:text-sm text-gray-400 truncate">
                     {conv.lastMessage}
                   </p>
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
+                <div className="flex flex-col items-end gap-1 md:gap-2 shrink-0">
                   <span className="text-xs text-gray-500">
                     {conv.updatedAt}
                   </span>
@@ -104,6 +118,6 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
