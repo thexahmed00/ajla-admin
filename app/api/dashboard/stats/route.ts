@@ -14,7 +14,7 @@ export async function GET() {
     }
 
     const [conversationsRes, vendorsRes, categoriesRes] = await Promise.all([
-      fetch("http://44.206.101.8/api/v1/conversations/?skip=0&limit=20", {
+      fetch("http://44.206.101.8/api/v1/admin/conversations?skip=0&limit=20", {
         headers: {
           Authorization: authHeader,
         },
