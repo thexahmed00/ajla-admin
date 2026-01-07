@@ -1,4 +1,5 @@
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface CategoryCardProps {
   icon: LucideIcon;
@@ -18,41 +19,55 @@ const CategoryCard = ({
   gradient,
 }: CategoryCardProps) => {
   return (
-    <div className="group relative flex flex-col items-center rounded-xl border border-border bg-card p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
-      {/* Icon with gradient background */}
-      <div
-        className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl shadow-lg transition-transform duration-300 group-hover:scale-105"
-        style={{ background: gradient }}
-      >
-        <Icon className="h-10 w-10 text-white" strokeWidth={1.5} />
-      </div>
+    <Link href={`/dashboard/categories/${slug}`}>
+      <div className="group relative flex flex-col items-center rounded-xl border border-border bg-surface p-6 md:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer overflow-hidden">
+        {/* Background glow on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        {/* Icon with gradient background */}
+        <div
+          className="relative mb-5 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-2xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
+          style={{ background: gradient }}
+        >
+          <Icon className="h-8 w-8 md:h-10 md:w-10 text-white" strokeWidth={1.5} />
+        </div>
 
-      {/* Title */}
-      <h3 className="mb-3 text-xl font-semibold text-foreground">{title}</h3>
+        {/* Title */}
+        <h3 className="relative mb-2 text-lg md:text-xl font-semibold text-text-main group-hover:text-primary transition-colors">
+          {title}
+        </h3>
 
-      {/* Slug badge */}
-      <span className="mb-4 rounded-full bg-secondary px-4 py-1.5 text-sm text-muted-foreground">
-        {slug}
-      </span>
-
-      {/* Description */}
-      <p className="mb-6 text-center text-sm text-muted-foreground">
-        {description}
-      </p>
-
-      {/* Divider */}
-      <div className="mb-6 h-px w-full bg-border" />
-
-      {/* Vendor count */}
-      <div className="text-center">
-        <span className="block text-4xl font-light text-primary">
-          {vendorCount}
+        {/* Slug badge */}
+        <span className="relative mb-3 rounded-full bg-surface-hover px-3 py-1 text-xs text-text-muted border border-border">
+          {slug}
         </span>
-        <span className="text-xs uppercase tracking-widest text-muted-foreground">
-          Vendors
-        </span>
+
+        {/* Description */}
+        <p className="relative mb-5 text-center text-sm text-text-muted line-clamp-2">
+          {description}
+        </p>
+
+        {/* Divider */}
+        <div className="relative mb-4 h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
+
+        {/* Vendor count */}
+        <div className="relative text-center">
+          <span className="block text-3xl md:text-4xl font-bold text-primary">
+            {vendorCount}
+          </span>
+          <span className="text-xs uppercase tracking-widest text-text-dim">
+            Vendors
+          </span>
+        </div>
+
+        {/* View arrow */}
+        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-2 group-hover:translate-x-0">
+          <div className="p-2 rounded-full bg-primary/10">
+            <ChevronRight className="w-4 h-4 text-primary" />
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

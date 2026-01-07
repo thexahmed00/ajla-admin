@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Check, ArrowRight, ArrowLeft } from "lucide-react";
 import { metaDefaults } from "./metaSchema";
 
 type Dish = {
@@ -21,6 +21,13 @@ export default function AddVendorPage() {
   type Metadata = {
     [key: string]: any;
   };
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const steps = [
+    { id: 1, title: "Basic Info" },
+    { id: 2, title: "Details" },
+    { id: 3, title: "Contact" },
+  ];
 
   const [form, setForm] = useState<{
     name: string;
@@ -108,17 +115,55 @@ export default function AddVendorPage() {
   };
 
   const handleNestedMetadata = (parent: string, key: string, value: any) => {
-  setForm(prev => ({
-    ...prev,
-    metadata: {
-      ...prev.metadata,
-      [parent]: {
-        ...(prev.metadata[parent] || {}),
-        [key]: value
+    setForm(prev => ({
+      ...prev,
+      metadata: {
+        ...prev.metadata,
+        [parent]: {
+          ...(prev.metadata[parent] || {}),
+          [key]: value
+        }
       }
-    }
-  }));
-};
+    }));
+  };
+
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, steps.length));
+  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+
+  const renderStepIndicator = () => (
+    <div className="mb-8">
+      <div className="flex items-center justify-between relative">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-secondary -z-10 rounded-full" />
+        <div 
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-300"
+            style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+        />
+        
+        {steps.map((step) => {
+          const isCompleted = currentStep > step.id;
+          const isCurrent = currentStep === step.id;
+          
+          return (
+            <div key={step.id} className="flex flex-col items-center gap-2 bg-background px-2">
+              <div 
+                className={`
+                  w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300
+                  ${isCompleted ? "bg-primary border-primary text-white" : ""}
+                  ${isCurrent ? "border-primary text-primary bg-background" : ""}
+                  ${!isCompleted && !isCurrent ? "border-muted-foreground/30 text-muted-foreground bg-secondary" : ""}
+                `}
+              >
+                {isCompleted ? <Check className="w-5 h-5" /> : step.id}
+              </div>
+              <span className={`text-xs font-medium ${isCurrent ? "text-primary" : "text-muted-foreground"}`}>
+                {step.title}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
 
 
@@ -126,91 +171,74 @@ export default function AddVendorPage() {
 
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Basic Information */}
-        <div className="bg-card border border-border rounded-xl p-8">
-          <h2 className="text-2xl font-light text-foreground mb-2">Basic Information</h2>
-          <div className="h-px bg-border mb-6" />
+    <div className="max-w-4xl mx-auto py-8 px-4">
+      <h1 className="text-3xl font-light mb-8">Add New Vendor</h1>
+      
+      {renderStepIndicator()}
 
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Category <span className="text-primary">*</span>
-              </label>
-              <div className="relative">
-                <select
-                  className="w-full appearance-none bg-black border border-border rounded-lg px-4 py-3.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
-                  name="category_slug"
-                  value={form.category_slug}
-                  onChange={(e) => {
-                    const slug = e.target.value;
-
-                    setForm(prev => ({
-                      ...prev,
-                      category_slug: slug,
-                      metadata: metaDefaults[slug] || {}
-                    }));
-                  }}
-
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.slug}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+      <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
+        
+        {/* Step 1: Basic Info */}
+        {currentStep === 1 && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+            <h2 className="text-xl font-medium mb-4">Basic Information</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Category <span className="text-red-500">*</span></label>
+                <div className="relative">
+                  <select
+                    className="w-full appearance-none bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                    name="category_slug"
+                    value={form.category_slug}
+                    onChange={(e) => {
+                      const slug = e.target.value;
+                      setForm(prev => ({
+                        ...prev,
+                        category_slug: slug,
+                        metadata: metaDefaults[slug] || {}
+                      }));
+                    }}
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.slug}>{c.name}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Name <span className="text-primary">*</span>
-              </label>
-              <input
-                className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                name="name"
-                placeholder="Vendor name"
-                value={form.name}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Short Description
-              </label>
-              <input
-                className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                name="description"
-                placeholder="Brief summary for listings"
-                value={form.description}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Full Description
-              </label>
-              <textarea
-                className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50 min-h-[120px] resize-none"
-                name="fullDescription"
-                placeholder="Detailed vendor description"
-                value={form.fullDescription}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-muted-foreground mb-2">
-                  Rating
-                </label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Vendor Name <span className="text-red-500">*</span></label>
                 <input
-                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none placeholder:text-muted-foreground/40"
+                  name="name"
+                  placeholder="e.g. The Ritz-Carlton"
+                  value={form.name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Initial Status</label>
+                <div className="flex items-center gap-3 bg-secondary border border-border rounded-lg px-4 py-2.5">
+                  <input
+                    type="checkbox"
+                    checked={form.status === "active"}
+                    onChange={(e) => setForm({ ...form, status: e.target.checked ? "active" : "inactive" })}
+                    className="w-5 h-5 rounded border-gray-400 bg-transparent accent-primary cursor-pointer"
+                  />
+                  <span className={form.status === "active" ? "text-green-500 font-medium" : "text-muted-foreground"}>
+                    {form.status === "active" ? "Active" : "Inactive"}
+                  </span>
+                </div>
+              </div>
+               
+               <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Rating</label>
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                   name="rating"
                   type="number"
                   step="0.1"
@@ -222,328 +250,238 @@ export default function AddVendorPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm text-muted-foreground mb-2">
-                  Status
-                </label>
-                <div className="flex items-center gap-3 bg-secondary border border-border rounded-lg px-4 py-3.5">
-                  <input
-                    type="checkbox"
-                    checked={form.status === "active"}
-                    onChange={(e) => setForm({ ...form, status: e.target.checked ? "active" : "inactive" })}
-                    className="w-5 h-5 rounded border-border bg-secondary accent-primary"
-                  />
-                  <span className="text-foreground">Active</span>
-                </div>
-              </div>
             </div>
-            {/* Restaurants */}
-            {form.category_slug === "restaurants" && (
-              <>
-                <div>
-                  <label className="block text-sm mb-2">Cuisine</label>
-                  <input
-                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+          </div>
+        )}
 
-                    value={form.metadata.cuisine}
-                    onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
-                    placeholder="Italian, Mediterranean"
-                  />
-                </div>
-               <div>
-  <label className="block text-sm mb-2">Working Hours</label>
+        {/* Step 2: Details & Metadata */}
+        {currentStep === 2 && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+             <h2 className="text-xl font-medium mb-4">Details & specific data</h2>
 
-  <div className="grid grid-cols-2 gap-3">
-
-    {/* DAYS FIELD */}
-    <input
-      className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5"
-      placeholder="Days (ex: Mon-Sun)"
-      value={(Object.keys(form.metadata.hours || {})[0] as string) || "mon-sun"}
-      onChange={(e) => {
-        const oldKey = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
-        const timing = Object.values(form.metadata.hours || {})[0] || "";
-
-        handleMetadataChange("hours", {
-          [e.target.value]: timing
-        });
-      }}
-    />
-
-    {/* TIMING FIELD */}
-    <input
-      className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5"
-      placeholder="Timings (ex: 12pm - 11pm)"
-      value={(Object.values(form.metadata.hours || {})[0] as string) || ""}
-      onChange={(e) => {
-        const key = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
-
-        handleMetadataChange("hours", {
-          [key]: e.target.value
-        });
-      }}
-    />
-  </div>
-</div>
-
-
-                <div>
-  <label className="block text-sm mb-2">Dishes</label>
-
-  {form.metadata.dishes?.map((dish: any, i: number) => (
-    <div key={i} className="grid grid-cols-2 gap-3 mb-2">
-      <input
-        className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5"
-        placeholder="Category"
-        value={dish?.category || ""}
-        onChange={(e) => {
-          const updated = [...form.metadata.dishes];
-          if (!updated[i]) updated[i] = { category: "", name: "" };
-          updated[i].category = e.target.value;
-          handleMetadataChange("dishes", updated);
-        }}
-      />
-
-      <input
-        className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5"
-        placeholder="Name"
-        value={dish?.name || ""}
-        onChange={(e) => {
-          const updated = [...form.metadata.dishes];
-          if (!updated[i]) updated[i] = { category: "", name: "" };
-          updated[i].name = e.target.value;
-          handleMetadataChange("dishes", updated);
-        }}
-      />
-    </div>
-  ))}
-
-  {/* 👇 ADD DISH BUTTON HERE */}
-  <button
-    type="button"
-    onClick={() =>
-      handleMetadataChange("dishes", [
-        ...form.metadata.dishes,
-        { category: "", name: "" },
-      ])
-    }
-    className="text-sm text-primary"
-  >
-    + Add Dish
-  </button>
-</div>
-
-
-              </>
-            )}
-            {/* Car rental */}
-            {/* {form.category_slug === "car_renting" && (
-  <div className="space-y-6">
-
-    <div>
-      <label>Vehicle Type</label>
-      <input
-        className="input"
-        value={form.metadata.vehicle_type}
-        onChange={(e) => handleMetadataChange("vehicle_type", e.target.value)}
-      />
-    </div>
-
-    <div className="grid grid-cols-2 gap-4">
-      <input
-        className="input"
-        placeholder="Daily Rate"
-        value={form.metadata.daily_rate}
-        onChange={(e) => handleMetadataChange("daily_rate", e.target.value)}
-      />
-      <input
-        className="input"
-        value={form.metadata.currency}
-        onChange={(e) => handleMetadataChange("currency", e.target.value)}
-      />
-    </div>
-
-    <div>
-      <h3 className="text-lg mb-2">Specifications</h3>
-      <div className="grid grid-cols-2 gap-4">
-        {Object.keys(form.metadata.specifications).map((key) => (
-          <input
-            key={key}
-            className="input"
-            placeholder={key}
-            value={form.metadata.specifications[key]}
-            onChange={(e) =>
-              handleNestedMetadata("specifications", key, e.target.value)
-            }
-          />
-        ))}
-      </div>
-    </div>
-
-    <ListEditor
-      title="Features"
-      value={form.metadata.features}
-      onChange={(list) => handleMetadataChange("features", list)}
-    />
-
-    <ListEditor
-      title="Services Included"
-      value={form.metadata.services_included}
-      onChange={(list) => handleMetadataChange("services_included", list)}
-    />
-
-    <div>
-      <h3 className="text-lg mb-2">Policies</h3>
-
-      <input
-        className="input"
-        placeholder="Minimum Age"
-        value={form.metadata.policies.minimum_age}
-        onChange={(e) =>
-          handleNestedMetadata("policies", "minimum_age", e.target.value)
-        }
-      />
-
-      <input
-        className="input mt-3"
-        placeholder="Deposit Amount"
-        value={form.metadata.policies.deposit_amount}
-        onChange={(e) =>
-          handleNestedMetadata("policies", "deposit_amount", e.target.value)
-        }
-      />
-
-      <input
-        className="input mt-3"
-        placeholder="Cancellation Policy"
-        value={form.metadata.policies.cancellation}
-        onChange={(e) =>
-          handleNestedMetadata("policies", "cancellation", e.target.value)
-        }
-      />
-    </div>
-  </div>
-)} */}
-
-
-
-
-
-
-            {/* <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Cuisine
-              </label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Short Description</label>
               <input
-                className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                placeholder="Italian, Mediterranean"
-                value={form.metadata.cuisine}
-                onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                name="description"
+                placeholder="Brief summary for list view"
+                value={form.description}
+                onChange={handleChange}
               />
             </div>
 
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Dishes
-              </label>
-              <div className="space-y-3">
-                {form.metadata.dishes.map((dish, i) => (
-                  <div key={i} className="grid grid-cols-2 gap-3">
-                    <input
-                      className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                      placeholder="Category"
-                      value={dish.category}
-                      onChange={(e) => handleDishChange(i, "category", e.target.value)}
-                    />
-                    <input
-                      className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                      placeholder="Name"
-                      value={dish.name}
-                      onChange={(e) => handleDishChange(i, "name", e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={addDish}
-                type="button"
-                className="mt-3 text-sm text-primary hover:text-primary/80 transition-colors"
-              >
-                + Add Dish
-              </button>
-            </div> */}
-          </div>
-        </div>
-
-        {/* Contact Information */}
-        <div className="bg-card border border-border rounded-xl p-8">
-          <h2 className="text-2xl font-light text-foreground mb-2">Contact Information</h2>
-          <div className="h-px bg-border mb-6" />
-
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Address
-              </label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Full Description</label>
               <textarea
-                className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50 min-h-[120px] resize-none"
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none min-h-[120px] resize-none"
+                name="fullDescription"
+                placeholder="Detailed information about the vendor..."
+                value={form.fullDescription}
+                onChange={handleChange}
+              />
+            </div>
+
+             {/* Category Specific Fields */}
+            {form.category_slug === "restaurants" && (
+                <div className="mt-8 border-t border-border pt-6 space-y-6">
+                    <h3 className="text-lg font-medium text-primary">Restaurant Specifics</h3>
+                    
+                    <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Cuisine Type</label>
+                    <input
+                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                        value={form.metadata.cuisine || ''}
+                        onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
+                        placeholder="e.g. Italian, Japanese"
+                    />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-muted-foreground">Opening Days</label>
+                            <input
+                            className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                            placeholder="e.g. Mon-Sun"
+                            value={(Object.keys(form.metadata.hours || {})[0] as string) || "mon-sun"}
+                             onChange={(e) => {
+                                const oldKey = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
+                                const timing = Object.values(form.metadata.hours || {})[0] || "";
+
+                                handleMetadataChange("hours", {
+                                [e.target.value]: timing
+                                });
+                            }}
+                            />
+                        </div>
+                         <div className="space-y-2">
+                            <label className="text-sm font-medium text-muted-foreground">Opening Hours</label>
+                            <input
+                            className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                            placeholder="e.g. 10 AM - 11 PM"
+                            value={(Object.values(form.metadata.hours || {})[0] as string) || ""}
+                            onChange={(e) => {
+                                const key = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
+
+                                handleMetadataChange("hours", {
+                                [key]: e.target.value
+                                });
+                            }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                         <div className="flex justify-between items-center">
+                            <label className="text-sm font-medium text-muted-foreground">Featured Dishes</label>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                handleMetadataChange("dishes", [
+                                    ...(form.metadata.dishes || []),
+                                    { category: "", name: "" },
+                                ])
+                                }
+                                className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
+                            >
+                                + Add Dish
+                            </button>
+                         </div>
+                         
+                         {(form.metadata.dishes || []).map((dish: any, i: number) => (
+                            <div key={i} className="flex gap-3">
+                            <input
+                                className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
+                                placeholder="Category (e.g. Starters)"
+                                value={dish?.category || ""}
+                                onChange={(e) => {
+                                const updated = [...(form.metadata.dishes || [])];
+                                if (!updated[i]) updated[i] = {};
+                                updated[i].category = e.target.value;
+                                handleMetadataChange("dishes", updated);
+                                }}
+                            />
+                            <input
+                                className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
+                                placeholder="Dish Name"
+                                value={dish?.name || ""}
+                                onChange={(e) => {
+                                const updated = [...(form.metadata.dishes || [])];
+                                if (!updated[i]) updated[i] = {};
+                                updated[i].name = e.target.value;
+                                handleMetadataChange("dishes", updated);
+                                }}
+                            />
+                             <button 
+                                type="button"
+                                onClick={() => {
+                                     const updated = [...(form.metadata.dishes || [])];
+                                     updated.splice(i, 1);
+                                     handleMetadataChange("dishes", updated);
+                                }}
+                                className="text-muted-foreground hover:text-red-500"
+                             >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                             </button>
+                            </div>
+                        ))}
+                         {(!form.metadata.dishes || form.metadata.dishes.length === 0) && (
+                             <div className="text-center py-4 bg-secondary/50 rounded-lg text-sm text-muted-foreground border border-dashed border-border">
+                                No dishes added yet.
+                             </div>
+                         )}
+                    </div>
+                </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 3: Contact Info */}
+        {currentStep === 3 && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+             <h2 className="text-xl font-medium mb-4">Contact Information</h2>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">Full Address</label>
+              <textarea
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none"
                 name="address"
-                placeholder="Full address"
+                placeholder="Street address, City, ZIP code"
+                rows={3}
                 value={form.address}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-muted-foreground mb-2">
-                  Phone
-                </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Phone Number</label>
                 <input
-                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                   name="phone"
-                  placeholder="+966 12 345 6789"
+                  placeholder="+966 50 000 0000"
                   value={form.phone}
                   onChange={handleChange}
                 />
               </div>
-              <div>
-                <label className="block text-sm text-muted-foreground mb-2">
-                  WhatsApp
-                </label>
+
+               <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">WhatsApp Number</label>
                 <input
-                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                   name="whatsapp"
-                  placeholder="+966 12 345 6789"
+                  placeholder="+966 50 000 0000"
                   value={form.whatsapp}
                   onChange={handleChange}
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Website
-              </label>
-              <input
-                className="w-full bg-secondary border border-border rounded-lg px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                name="website"
-                placeholder="https://example.com"
-                value={form.website}
-                onChange={handleChange}
-              />
+               <div className="col-span-full space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">Website</label>
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                  name="website"
+                  placeholder="https://www.example.com"
+                  value={form.website}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
-
-            <button
-              onClick={submit}
-              type="button"
-              
-              className="w-full bg-[#FF7F41] cursor-pointer text-primary-foreground py-3.5 rounded-lg font-medium hover:bg-primary/90 transition-colors mt-4"
-            >
-              Save Vendor
-            </button>
           </div>
+        )}
+
+        {/* Navigation Actions */}
+        <div className="flex items-center justify-between mt-10 pt-6 border-t border-border">
+          <button
+            onClick={prevStep}
+            disabled={currentStep === 1}
+            className={`
+                flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-colors
+                ${currentStep === 1 ? "opacity-0 pointer-events-none" : "hover:bg-secondary text-foreground"}
+            `}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+
+          {currentStep < steps.length ? (
+            <button
+                onClick={nextStep}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-primary/20"
+            >
+                Next Step
+                <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+                onClick={submit}
+                className="bg-[#FF7F41] hover:bg-[#FF7F41]/90 text-white px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-[#FF7F41]/20"
+            >
+                <Check className="w-4 h-4" />
+                Save Vendor
+            </button>
+          )}
         </div>
+
       </div>
     </div>
   );

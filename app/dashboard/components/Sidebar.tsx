@@ -3,12 +3,13 @@
 import { logout } from "@/app/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut } from "lucide-react";
 
 const menu = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Conversations", href: "/dashboard/conversations/1" },
-  { name: "Vendors", href: "/dashboard/vendors" },
-  { name: "Categories", href: "/dashboard/categories" },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Conversations", href: "/dashboard/conversations/1", icon: MessageSquare },
+  { name: "Vendors", href: "/dashboard/vendors", icon: Store },
+  { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
 ];
 
 export default function Sidebar() {
@@ -21,42 +22,65 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#1C1C1C] border-r border-[#2A2A2A] p-6 flex flex-col h-full">
-      <h1 className="text-2xl tracking-widest mb-10">
-        AJLA <span className="text-[#FF7F41] text-sm">ADMIN</span>
-      </h1>
+    <aside className="w-64 bg-surface/50 backdrop-blur-sm border-r border-border p-6 flex flex-col h-screen sticky top-0">
+      {/* Logo */}
+      <div className="mb-10">
+        <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
+          AJLA 
+          <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span>
+        </h1>
+        <div className="mt-2 h-0.5 w-12 bg-gradient-to-r from-primary to-transparent rounded-full" />
+      </div>
 
-      <nav className="space-y-2">
-        {menu.map((item) => {
+      {/* Navigation */}
+      <nav className="space-y-1.5 flex-1">
+        {menu.map((item, index) => {
           const active =
             pathname === item.href ||
             (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          const Icon = item.icon;
 
           return (
             <Link key={item.name} href={item.href}>
               <div
-                className={`relative px-4 py-3 rounded-lg cursor-pointer transition ${
-                  active
-                    ? "bg-[#2A1A12] text-[#FF7F41]"
-                    : "text-gray-300 hover:text-[#FF7F41]"
-                }`}
+                className={`relative px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 group flex items-center gap-3
+                  ${active
+                    ? "bg-primary/10 text-primary"
+                    : "text-text-muted hover:text-text-main hover:bg-surface-hover"
+                  }`}
               >
+                {/* Active indicator */}
+                <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full bg-primary transition-all duration-300 ${active ? 'h-6 opacity-100' : 'h-0 opacity-0'}`} />
+                
+                {/* Icon */}
+                <Icon className={`w-5 h-5 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
+                
+                {/* Label */}
+                <span className={`font-medium text-sm ${active ? 'font-semibold' : ''}`}>
+                  {item.name}
+                </span>
+
+                {/* Hover glow effect */}
                 {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-[#FF7F41]" />
+                  <div className="absolute inset-0 rounded-xl bg-primary/5 pointer-events-none" />
                 )}
-                {item.name}
               </div>
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto pt-10">
+      {/* Logout Button */}
+      <div className="pt-6 border-t border-border/50">
         <button
           onClick={handleLogout}
-          className="w-full py-2 rounded-lg bg-[#121212] border border-[#2A2A2A] text-sm"
+          className="w-full py-3 px-4 rounded-xl bg-background/50 border border-border text-text-muted text-sm 
+            hover:border-red-500/30 hover:text-red-400 hover:bg-red-500/5
+            transition-all duration-200 cursor-pointer
+            flex items-center justify-center gap-2 group"
         >
-          Logout
+          <LogOut className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <span>Logout</span>
         </button>
       </div>
     </aside>

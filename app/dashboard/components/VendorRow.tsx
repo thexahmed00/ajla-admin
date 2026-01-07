@@ -1,3 +1,4 @@
+import ImageWithFallback from "./ImageWithFallback";
 import { Vendor } from "../types/vendor";
 import {
   Star,
@@ -5,25 +6,42 @@ import {
   XCircle,
   Eye,
   Pencil,
-  Trash2
+  Trash2,
+  Store
 } from "lucide-react";
 
-export default function VendorRow({ vendor }: { vendor: Vendor }) {
+interface VendorRowProps {
+  vendor: Vendor;
+  index?: number;
+}
+
+export default function VendorRow({ vendor, index = 0 }: VendorRowProps) {
   return (
-    <tr className="border-t border-[#2A2A2A] hover:bg-[#222] transition">
-      
+    <tr 
+      className="hover:bg-surface-hover/50 transition-colors duration-200 group"
+      style={{ 
+        animation: 'fadeIn 0.4s ease-out forwards',
+        animationDelay: `${index * 0.05}s`,
+        opacity: 0
+      }}
+    >
       {/* Vendor info */}
       <td className="px-6 py-4">
         <div className="flex items-center gap-4">
-          <img
-            src={vendor.image}
-            alt={vendor.name}
-            className="w-12 h-12 rounded-lg object-cover"
-          />
+          <div className="relative">
+            <ImageWithFallback
+              src={vendor.image}
+              alt={vendor.name}
+              className="w-11 h-11 rounded-lg object-cover ring-2 ring-transparent group-hover:ring-primary/20 transition-all"
+              fallbackIcon={Store}
+            />
+          </div>
 
-          <div>
-            <p className="font-medium">{vendor.name}</p>
-            <p className="text-xs text-gray-400">
+          <div className="min-w-0">
+            <p className="font-medium text-text-main group-hover:text-primary transition-colors truncate max-w-[180px]">
+              {vendor.name}
+            </p>
+            <p className="text-xs text-text-muted truncate max-w-[180px]">
               {vendor.description}
             </p>
           </div>
@@ -32,29 +50,29 @@ export default function VendorRow({ vendor }: { vendor: Vendor }) {
 
       {/* Category */}
       <td className="px-6 py-4">
-        <span className="px-3 py-1 rounded-full text-xs bg-[#2A1A12] text-[#FF7F41]">
+        <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/10">
           {vendor.category}
         </span>
       </td>
 
       {/* Rating */}
       <td className="px-6 py-4">
-        <span className="flex items-center gap-1 text-yellow-400">
-          <Star className="w-4 h-4 fill-yellow-400" />
-          <span className="text-white">{vendor.rating}</span>
+        <span className="inline-flex items-center gap-1.5 text-yellow-500">
+          <Star className="w-4 h-4 fill-yellow-500" />
+          <span className="text-text-main font-medium">{vendor.rating}</span>
         </span>
       </td>
 
       {/* Status */}
       <td className="px-6 py-4">
         {vendor.status === "Active" ? (
-          <span className="px-3 py-1 rounded-full text-xs bg-green-900 text-green-300 flex items-center gap-1">
-            <CheckCircle className="w-4 h-4" />
+          <span className="inline-flex px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/10 items-center gap-1.5">
+            <CheckCircle className="w-3.5 h-3.5" />
             Active
           </span>
         ) : (
-          <span className="px-3 py-1 rounded-full text-xs bg-red-900 text-red-300 flex items-center gap-1">
-            <XCircle className="w-4 h-4" />
+          <span className="inline-flex px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/10 items-center gap-1.5">
+            <XCircle className="w-3.5 h-3.5" />
             Inactive
           </span>
         )}
@@ -62,21 +80,29 @@ export default function VendorRow({ vendor }: { vendor: Vendor }) {
 
       {/* Actions */}
       <td className="px-6 py-4">
-        <div className="flex gap-2">
-          <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#2A2A2A] hover:bg-[#2A2A2A]">
-            <Eye className="w-4 h-4 text-gray-300" />
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button 
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
+            title="View"
+          >
+            <Eye className="w-4 h-4" />
           </button>
 
-          <button className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#2A2A2A] hover:bg-[#2A2A2A]">
-            <Pencil className="w-4 h-4 text-gray-300" />
+          <button 
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
+            title="Edit"
+          >
+            <Pencil className="w-4 h-4" />
           </button>
 
-          <button className="w-9 h-9 flex items-center justify-center rounded-lg bg-red-600 hover:bg-red-700">
-            <Trash2 className="w-4 h-4 text-white" />
+          <button 
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 transition-all duration-200 cursor-pointer"
+            title="Delete"
+          >
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </td>
-
     </tr>
   );
 }

@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }) {
   
   return (
-    <div className="flex min-h-screen bg-[#121212] text-white">
+    <div className="flex min-h-screen bg-background text-text-main">
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar />
@@ -18,7 +18,7 @@ export default function DashboardLayout({
       <MobileSidebar />
 
       {/* Content */}
-      <main className="flex-1 p-4 md:p-8 mt-10">
+      <main className="flex-1 p-4 md:p-8 md:mt-0 mt-16 overflow-x-hidden">
         {children}
       </main>
     </div>

@@ -2,22 +2,22 @@
 
 import { logout } from "@/app/lib/auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut } from "lucide-react";
 
 const menu = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Conversations", href: "/dashboard" },
-  { name: "Vendors", href: "/dashboard/vendors" },
-  { name: "Categories", href: "/dashboard/categories" },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Conversations", href: "/dashboard/conversations/1", icon: MessageSquare },
+  { name: "Vendors", href: "/dashboard/vendors", icon: Store },
+  { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
 ];
 
 export default function MobileSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-    const router = useRouter();
-  
+  const router = useRouter();
+
   const handleLogout = () => {
     logout();
     router.push("/login");
@@ -28,38 +28,42 @@ export default function MobileSidebar() {
       {/* Floating Hamburger */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-[#1C1C1C] border border-[#2A2A2A] text-xl text-white md:hidden"
+        className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl glass text-text-main md:hidden hover:bg-surface-hover transition-colors"
       >
-        ☰
+        <Menu className="w-5 h-5" />
       </button>
 
       {/* Overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 md:hidden"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      <div
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setOpen(false)}
+      />
 
       {/* Sidebar Drawer */}
       <aside
-        className={`
-          fixed top-0 left-0 z-50 h-full w-64
-          bg-[#1C1C1C] border-r border-[#2A2A2A] p-6 flex flex-col
-          transition-transform duration-300
-          ${open ? "translate-x-0" : "-translate-x-full"}
-          md:hidden
-        `}
+        className={`fixed top-0 left-0 z-50 h-full w-72 glass p-6 flex flex-col transition-transform duration-300 ease-out md:hidden ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <h1 className="text-2xl tracking-widest mb-10">
-          AJLA <span className="text-[#FF7F41] text-sm">ADMIN</span>
-        </h1>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-10">
+          <h1 className="text-xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
+            AJLA
+            <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span>
+          </h1>
+          <button
+            onClick={() => setOpen(false)}
+            className="p-2 rounded-lg hover:bg-surface-hover text-text-muted hover:text-text-main transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-        <nav className="space-y-2">
+        {/* Navigation */}
+        <nav className="space-y-1.5 flex-1">
           {menu.map((item) => {
             const active =
               pathname === item.href ||
-              pathname.startsWith(item.href + "/");
+              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            const Icon = item.icon;
 
             return (
               <Link
@@ -68,26 +72,33 @@ export default function MobileSidebar() {
                 onClick={() => setOpen(false)}
               >
                 <div
-                  className={`relative px-4 py-3 rounded-lg cursor-pointer transition ${
+                  className={`relative px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 flex items-center gap-3 ${
                     active
-                      ? "bg-[#2A1A12] text-[#FF7F41]"
-                      : "text-gray-300 hover:text-[#FF7F41]"
+                      ? "bg-primary/10 text-primary"
+                      : "text-text-muted hover:text-text-main hover:bg-surface-hover"
                   }`}
                 >
                   {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-[#FF7F41]" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-primary" />
                   )}
-
-                  {item.name}
+                  <Icon className="w-5 h-5" />
+                  <span className={`font-medium text-sm ${active ? 'font-semibold' : ''}`}>
+                    {item.name}
+                  </span>
                 </div>
               </Link>
             );
           })}
         </nav>
 
-        <div className="mt-auto pt-10">
-          <button onClick={handleLogout} className="w-full py-2 rounded-lg bg-[#121212] border border-[#2A2A2A] text-sm">
-            Logout
+        {/* Logout */}
+        <div className="pt-6 border-t border-border/50">
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 px-4 rounded-xl bg-background/50 border border-border text-text-muted text-sm hover:border-red-500/30 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
           </button>
         </div>
       </aside>
