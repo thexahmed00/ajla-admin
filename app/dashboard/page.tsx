@@ -3,10 +3,19 @@ import Link from "next/link";
 import StatCard from "./components/StatCard";
 import { Conversation } from "./types/conversation";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isAdmin } from "../lib/auth";
+import { fetchDashboardStats } from "../lib/api";
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+
+
+
+
   const conversations: Conversation[] = [
     {
       id: "1",
@@ -45,13 +54,36 @@ export default function DashboardPage() {
     },
   ];
 
-  const router = useRouter();
+  
 
   useEffect(() => {
     if (!isAdmin()) {
       router.replace("/login");
     }
   }, []);
+
+    useEffect(() => {
+    async function loadStats() {
+      try {
+        const data = await fetchDashboardStats();
+        setStats(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadStats();
+  }, []);
+
+  if (loading) {
+    return <p className="text-gray-400">Loading dashboard...</p>;
+  }
+
+
+
+
 
   return (
     <div className="w-full">
@@ -65,10 +97,10 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6">
-        <StatCard title="Total Conversations" value="156" />
-        <StatCard title="Active Vendors" value="48" />
-        <StatCard title="Service Categories" value="8" />
-        <StatCard title="Availability" value="24/7" />
+         <StatCard title="Total Conversations" value={stats.totalConversations} />
+      <StatCard title="Active Vendors" value={stats.activeVendors} />
+      <StatCard title="Service Categories" value={stats.serviceCategories} />
+      <StatCard title="Availability" value={stats.availability} />
       </div>
 
       {/* Conversations */}

@@ -9,3 +9,4 @@ export type Vendor = {
   status: VendorStatus;
   image: string;
 };
+
