@@ -68,7 +68,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
       {/* LEFT */}
       <div className="w-full max-w-[500px] flex items-center justify-center px-8 ml-14">
         <div className="w-full bg-[#1C1C1C] rounded-2xl p-8 border border-[#2A2A2A] shadow-xl">
@@ -118,7 +118,7 @@ export default function LoginPage() {
       </div>
 
       {/* RIGHT */}
-      <div className="hidden md:block flex-1 bg-gradient-to-br from-black to-[#4A2E22]" />
+      {/* <div className="hidden md:block flex-1 bg-gradient-to-br from-black to-[#4A2E22]" /> */}
     </div>
   );
 }
