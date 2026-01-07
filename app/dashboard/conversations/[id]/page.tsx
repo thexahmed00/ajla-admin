@@ -82,7 +82,7 @@ export default function ChatPage() {
       {/* Header */}
       <div className="flex items-center gap-4 border-b border-[#2A2A2A] px-6 py-4">
         <Link
-          href="/"
+          href="/dashboard"
           className="rounded-lg bg-[#1F1F1F] p-2 hover:bg-[#2A2A2A]"
         >
           ←
