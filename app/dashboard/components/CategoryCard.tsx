@@ -2,7 +2,7 @@ import { LucideIcon, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface CategoryCardProps {
-  icon: LucideIcon;
+  icon: string;
   title: string;
   slug: string;
   description: string;
@@ -11,7 +11,7 @@ interface CategoryCardProps {
 }
 
 const CategoryCard = ({
-  icon: Icon,
+  icon: icon,
   title,
   slug,
   description,
@@ -29,7 +29,8 @@ const CategoryCard = ({
           className="relative mb-5 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-2xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
           style={{ background: gradient }}
         >
-          <Icon className="h-8 w-8 md:h-10 md:w-10 text-white" strokeWidth={1.5} />
+          <img src={icon} alt="Icon" className="h-full w-full md:h-10 md:w-10 text-white" />
+          {/* <Icon className="h-8 w-8 md:h-10 md:w-10 text-white" strokeWidth={1.5} /> */}
         </div>
 
         {/* Title */}
@@ -51,14 +52,14 @@ const CategoryCard = ({
         <div className="relative mb-4 h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
 
         {/* Vendor count */}
-        <div className="relative text-center">
+        {/* <div className="relative text-center">
           <span className="block text-3xl md:text-4xl font-bold text-primary">
             {vendorCount}
           </span>
           <span className="text-xs uppercase tracking-widest text-text-dim">
             Vendors
           </span>
-        </div>
+        </div> */}
 
         {/* View arrow */}
         <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-2 group-hover:translate-x-0">

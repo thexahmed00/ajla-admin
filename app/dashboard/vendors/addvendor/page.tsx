@@ -69,7 +69,7 @@ export default function AddVendorPage() {
   const submit = async () => {
     try {
       const token = localStorage.getItem("access_token");
-      console.log("token",token)
+      console.log("token", token)
       if (!token) {
         alert("Authentication expired, please login again.");
         return;
@@ -134,18 +134,18 @@ export default function AddVendorPage() {
     <div className="mb-8">
       <div className="flex items-center justify-between relative">
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-secondary -z-10 rounded-full" />
-        <div 
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-300"
-            style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-300"
+          style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
         />
-        
+
         {steps.map((step) => {
           const isCompleted = currentStep > step.id;
           const isCurrent = currentStep === step.id;
-          
+
           return (
             <div key={step.id} className="flex flex-col items-center gap-2 bg-background px-2">
-              <div 
+              <div
                 className={`
                   w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300
                   ${isCompleted ? "bg-primary border-primary text-white" : ""}
@@ -173,16 +173,16 @@ export default function AddVendorPage() {
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       <h1 className="text-3xl font-light mb-8">Add New Vendor</h1>
-      
+
       {renderStepIndicator()}
 
       <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
-        
+
         {/* Step 1: Basic Info */}
         {currentStep === 1 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
             <h2 className="text-xl font-medium mb-4">Basic Information</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">Category <span className="text-red-500">*</span></label>
@@ -234,8 +234,8 @@ export default function AddVendorPage() {
                   </span>
                 </div>
               </div>
-               
-               <div className="space-y-2">
+
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">Rating</label>
                 <input
                   className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
@@ -257,7 +257,7 @@ export default function AddVendorPage() {
         {/* Step 2: Details & Metadata */}
         {currentStep === 2 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-             <h2 className="text-xl font-medium mb-4">Details & specific data</h2>
+            <h2 className="text-xl font-medium mb-4">Details & specific data</h2>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">Short Description</label>
@@ -281,125 +281,683 @@ export default function AddVendorPage() {
               />
             </div>
 
-             {/* Category Specific Fields */}
+            {/* Category Specific Fields */}
+            {/* Restaurants Form */}
             {form.category_slug === "restaurants" && (
-                <div className="mt-8 border-t border-border pt-6 space-y-6">
-                    <h3 className="text-lg font-medium text-primary">Restaurant Specifics</h3>
-                    
-                    <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Cuisine Type</label>
-                    <input
-                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
-                        value={form.metadata.cuisine || ''}
-                        onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
-                        placeholder="e.g. Italian, Japanese"
-                    />
-                    </div>
+              <div className="mt-8 border-t border-border pt-6 space-y-6">
+                <h3 className="text-lg font-medium text-primary">Restaurant Specifics</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-muted-foreground">Opening Days</label>
-                            <input
-                            className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
-                            placeholder="e.g. Mon-Sun"
-                            value={(Object.keys(form.metadata.hours || {})[0] as string) || "mon-sun"}
-                             onChange={(e) => {
-                                const oldKey = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
-                                const timing = Object.values(form.metadata.hours || {})[0] || "";
-
-                                handleMetadataChange("hours", {
-                                [e.target.value]: timing
-                                });
-                            }}
-                            />
-                        </div>
-                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-muted-foreground">Opening Hours</label>
-                            <input
-                            className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
-                            placeholder="e.g. 10 AM - 11 PM"
-                            value={(Object.values(form.metadata.hours || {})[0] as string) || ""}
-                            onChange={(e) => {
-                                const key = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
-
-                                handleMetadataChange("hours", {
-                                [key]: e.target.value
-                                });
-                            }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                         <div className="flex justify-between items-center">
-                            <label className="text-sm font-medium text-muted-foreground">Featured Dishes</label>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                handleMetadataChange("dishes", [
-                                    ...(form.metadata.dishes || []),
-                                    { category: "", name: "" },
-                                ])
-                                }
-                                className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
-                            >
-                                + Add Dish
-                            </button>
-                         </div>
-                         
-                         {(form.metadata.dishes || []).map((dish: any, i: number) => (
-                            <div key={i} className="flex gap-3">
-                            <input
-                                className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
-                                placeholder="Category (e.g. Starters)"
-                                value={dish?.category || ""}
-                                onChange={(e) => {
-                                const updated = [...(form.metadata.dishes || [])];
-                                if (!updated[i]) updated[i] = {};
-                                updated[i].category = e.target.value;
-                                handleMetadataChange("dishes", updated);
-                                }}
-                            />
-                            <input
-                                className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
-                                placeholder="Dish Name"
-                                value={dish?.name || ""}
-                                onChange={(e) => {
-                                const updated = [...(form.metadata.dishes || [])];
-                                if (!updated[i]) updated[i] = {};
-                                updated[i].name = e.target.value;
-                                handleMetadataChange("dishes", updated);
-                                }}
-                            />
-                             <button 
-                                type="button"
-                                onClick={() => {
-                                     const updated = [...(form.metadata.dishes || [])];
-                                     updated.splice(i, 1);
-                                     handleMetadataChange("dishes", updated);
-                                }}
-                                className="text-muted-foreground hover:text-red-500"
-                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                             </button>
-                            </div>
-                        ))}
-                         {(!form.metadata.dishes || form.metadata.dishes.length === 0) && (
-                             <div className="text-center py-4 bg-secondary/50 rounded-lg text-sm text-muted-foreground border border-dashed border-border">
-                                No dishes added yet.
-                             </div>
-                         )}
-                    </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Cuisine Type</label>
+                  <input
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    value={form.metadata.cuisine || ''}
+                    onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
+                    placeholder="e.g. Italian, Japanese"
+                  />
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Opening Days</label>
+                    <input
+                      className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                      placeholder="e.g. Mon-Sun"
+                      value={(Object.keys(form.metadata.hours || {})[0] as string) || "mon-sun"}
+                      onChange={(e) => {
+                        const oldKey = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
+                        const timing = Object.values(form.metadata.hours || {})[0] || "";
+
+                        handleMetadataChange("hours", {
+                          [e.target.value]: timing
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Opening Hours</label>
+                    <input
+                      className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                      placeholder="e.g. 10 AM - 11 PM"
+                      value={(Object.values(form.metadata.hours || {})[0] as string) || ""}
+                      onChange={(e) => {
+                        const key = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
+
+                        handleMetadataChange("hours", {
+                          [key]: e.target.value
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-medium text-muted-foreground">Featured Dishes</label>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleMetadataChange("dishes", [
+                          ...(form.metadata.dishes || []),
+                          { category: "", name: "" },
+                        ])
+                      }
+                      className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
+                    >
+                      + Add Dish
+                    </button>
+                  </div>
+
+                  {(form.metadata.dishes || []).map((dish: any, i: number) => (
+                    <div key={i} className="flex gap-3">
+                      <input
+                        className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
+                        placeholder="Category (e.g. Starters)"
+                        value={dish?.category || ""}
+                        onChange={(e) => {
+                          const updated = [...(form.metadata.dishes || [])];
+                          if (!updated[i]) updated[i] = {};
+                          updated[i].category = e.target.value;
+                          handleMetadataChange("dishes", updated);
+                        }}
+                      />
+                      <input
+                        className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
+                        placeholder="Dish Name"
+                        value={dish?.name || ""}
+                        onChange={(e) => {
+                          const updated = [...(form.metadata.dishes || [])];
+                          if (!updated[i]) updated[i] = {};
+                          updated[i].name = e.target.value;
+                          handleMetadataChange("dishes", updated);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = [...(form.metadata.dishes || [])];
+                          updated.splice(i, 1);
+                          handleMetadataChange("dishes", updated);
+                        }}
+                        className="text-muted-foreground hover:text-red-500"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
+                      </button>
+                    </div>
+                  ))}
+                  {(!form.metadata.dishes || form.metadata.dishes.length === 0) && (
+                    <div className="text-center py-4 bg-secondary/50 rounded-lg text-sm text-muted-foreground border border-dashed border-border">
+                      No dishes added yet.
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
+            {/* Car Rental Form */}
+            {form.category_slug === "car_renting" && (
+              <div className="bg-card border border-border rounded-xl p-8 mt-6">
+                <h2 className="text-xl mb-3">Car Rental Details</h2>
+
+                {/* Vehicle Type */}
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                  placeholder="Vehicle Type"
+                  value={form.metadata.vehicle_type}
+                  onChange={e => handleMetadataChange("vehicle_type", e.target.value)}
+                />
+
+                {/* Daily Rate */}
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                  type="number"
+                  placeholder="Daily Rate"
+                  value={form.metadata.daily_rate}
+                  onChange={e => handleMetadataChange("daily_rate", Number(e.target.value))}
+                />
+
+                {/* Currency */}
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                  placeholder="Currency"
+                  value={form.metadata.currency}
+                  onChange={e => handleMetadataChange("currency", e.target.value)}
+                />
+
+                <h3 className="text-lg mt-4 mb-2">Specifications</h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Doors"
+                    value={form.metadata.specifications.doors}
+                    onChange={e => handleNestedMetadata("specifications", "doors", e.target.value)}
+                  />
+
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Seats"
+                    value={form.metadata.specifications.seats}
+                    onChange={e => handleNestedMetadata("specifications", "seats", e.target.value)}
+                  />
+
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Fuel Type"
+                    value={form.metadata.specifications.fuel_type}
+                    onChange={e => handleNestedMetadata("specifications", "fuel_type", e.target.value)}
+                  />
+
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Transmission"
+                    value={form.metadata.specifications.transmission}
+                    onChange={e => handleNestedMetadata("specifications", "transmission", e.target.value)}
+                  />
+
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Engine"
+                    value={form.metadata.specifications.engine}
+                    onChange={e => handleNestedMetadata("specifications", "engine", e.target.value)}
+                  />
+
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Horsepower"
+                    value={form.metadata.specifications.horsepower}
+                    onChange={e => handleNestedMetadata("specifications", "horsepower", e.target.value)}
+                  />
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Acceleration"
+                    value={form.metadata.specifications.acceleration}
+                    onChange={e => handleNestedMetadata("specifications", "acceleration", e.target.value)}
+                  />
+                  <input className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+                    placeholder="Top Speed"
+                    value={form.metadata.specifications.top_speed}
+                    onChange={e => handleNestedMetadata("specifications", "top_speed", e.target.value)}
+                  />
+                </div>
+
+                {/* FEATURES ARRAY */}
+                <h3 className="mt-4 mb-2">Features</h3>
+                {form.metadata.features.map((f: string, i: number) => (
+                  <input
+                    key={i}
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                    placeholder="Feature"
+                    value={f}
+                    onChange={(e) => {
+                      const updated = [...form.metadata.features];
+                      updated[i] = e.target.value;
+                      handleMetadataChange("features", updated);
+                    }}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="text-sm text-primary"
+                  onClick={() => handleMetadataChange("features", [...form.metadata.features, ""])}
+                >
+                  + Add Feature
+                </button>
+                <h3 className="mt-4 mb-2">Services Included</h3>
+                {form.metadata.services_included.map((f: string, i: number) => (
+                  <input
+                    key={i}
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                    placeholder="Service"
+                    value={f}
+                    onChange={(e) => {
+                      const updated = [...form.metadata.services_included];
+                      updated[i] = e.target.value;
+                      handleMetadataChange("services_included", updated);
+                    }}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="text-sm text-primary"
+                  onClick={() => handleMetadataChange("services_included", [...form.metadata.services_included, ""])}
+                >
+                  + Add Service
+                </button>
+
+                {/* POLICIES */}
+                <h3 className="mt-4 mb-2">Policies</h3>
+
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                  placeholder="Minimum Age"
+                  value={form.metadata.policies.minimum_age}
+                  onChange={e => handleNestedMetadata("policies", "minimum_age", e.target.value)}
+                />
+
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                  placeholder="Deposit Amount"
+                  value={form.metadata.policies.deposit_amount}
+                  onChange={e => handleNestedMetadata("policies", "deposit_amount", e.target.value)}
+                />
+
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+
+                  placeholder="Cancellation Policy"
+                  value={form.metadata.policies.cancellation}
+                  onChange={e => handleNestedMetadata("policies", "cancellation", e.target.value)}
+                />
+              </div>
+            )}
+            {/* Hotels Form */}
+            {form.category_slug === "hotels" && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Hotel Details</h3>
+                {/* AMENITIES */}
+                <div className="mb-6">
+                  <label className="block text-sm mb-2">Amenities</label>
+
+                  {form.metadata.amenities?.map((amenity: string, i: number) => (
+                    <div key={i} className="flex gap-2 mb-2">
+                      <input
+                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        placeholder="Amenity (e.g. Pool, Gym)"
+                        value={amenity || ""}
+                        onChange={(e) => {
+                          const updated = [...form.metadata.amenities];
+                          updated[i] = e.target.value;
+                          handleMetadataChange("amenities", updated);
+                        }}
+                      />
+
+                      {/* Remove amenity */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = form.metadata.amenities.filter(
+                            (_: string, index: number) => index !== i
+                          );
+                          handleMetadataChange("amenities", updated);
+                        }}
+                        className="text-red-500 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMetadataChange("amenities", [
+                        ...form.metadata.amenities,
+                        "",
+                      ])
+                    }
+                    className="text-sm text-primary"
+                  >
+                    + Add Amenity
+                  </button>
+                </div>
+                {/* ROOMS */}
+                <div>
+                  <label className="block text-sm mb-2">Room Types</label>
+
+                  {form.metadata.rooms?.map((room: any, i: number) => (
+                    <div key={i} className="grid grid-cols-2 gap-3 mb-3">
+                      <input
+                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        placeholder="Room Type (e.g. Deluxe, Suite)"
+                        value={room?.type || ""}
+                        onChange={(e) => {
+                          const updated = [...form.metadata.rooms];
+
+                          if (!updated[i]) updated[i] = { type: "", price: "" };
+
+                          updated[i].type = e.target.value;
+                          handleMetadataChange("rooms", updated);
+                        }}
+                      />
+
+                      <input
+                        type="number"
+                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        placeholder="Price"
+                        value={room?.price || ""}
+                        onChange={(e) => {
+                          const updated = [...form.metadata.rooms];
+
+                          if (!updated[i]) updated[i] = { type: "", price: "" };
+
+                          updated[i].price = e.target.value;
+                          handleMetadataChange("rooms", updated);
+                        }}
+                      />
+
+                      {/* Remove Room */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = form.metadata.rooms.filter(
+                            (_: any, index: number) => index !== i
+                          );
+                          handleMetadataChange("rooms", updated);
+                        }}
+                        className="text-red-500 text-sm col-span-2 text-left"
+                      >
+                        Remove Room
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMetadataChange("rooms", [
+                        ...form.metadata.rooms,
+                        { type: "", price: "" },
+                      ])
+                    }
+                    className="text-sm text-primary"
+                  >
+                    + Add Room
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        {form.category_slug === "jets" && (
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Private Jets Details</h3>
+
+            <label className="block text-sm mb-2">Aircrafts</label>
+
+            {form.metadata.aircraft?.map((item: string, i: number) => (
+              <div key={i} className="flex gap-2 mb-2">
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground
+        placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  placeholder="Aircraft Name (e.g. Gulfstream G650)"
+                  value={item || ""}
+                  onChange={(e) => {
+                    const updated = [...form.metadata.aircraft];
+                    updated[i] = e.target.value;
+                    handleMetadataChange("aircraft", updated);
+                  }}
+                />
+
+                {/* Remove */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = form.metadata.aircraft.filter(
+                      (_: string, index: number) => index !== i
+                    );
+                    handleMetadataChange("aircraft", updated);
+                  }}
+                  className="text-red-500 text-sm"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() =>
+                handleMetadataChange("aircraft", [
+                  ...form.metadata.aircraft,
+                  "",
+                ])
+              }
+              className="text-sm text-primary"
+            >
+              + Add Aircraft
+            </button>
+          </div>
+        )}
+        {form.category_slug === "flights" && (
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Flights Details</h3>
+
+            {/* Open Hours */}
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Open Hours</label>
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                placeholder="Example: 24/7 Concierge Support"
+                value={form.metadata.open_hours || ""}
+                onChange={(e) =>
+                  handleMetadataChange("open_hours", e.target.value)
+                }
+              />
+            </div>
+
+            {/* Service Area */}
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Service Area</label>
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                placeholder="Example: Domestic & International routes"
+                value={form.metadata.service_area || ""}
+                onChange={(e) =>
+                  handleMetadataChange("service_area", e.target.value)
+                }
+              />
+            </div>
+
+            {/* Languages */}
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Languages</label>
+
+              {form.metadata.languages?.map((lang: string, i: number) => (
+                <div key={i} className="flex gap-2 mb-2">
+                  <input
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                    placeholder="Language"
+                    value={lang || ""}
+                    onChange={(e) => {
+                      const updated = [...form.metadata.languages];
+                      updated[i] = e.target.value;
+                      handleMetadataChange("languages", updated);
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = form.metadata.languages.filter(
+                        (_: string, index: number) => index !== i
+                      );
+                      handleMetadataChange("languages", updated);
+                    }}
+                    className="text-red-500 text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleMetadataChange("languages", [
+                    ...form.metadata.languages,
+                    ""
+                  ])
+                }
+                className="text-primary text-sm"
+              >
+                + Add Language
+              </button>
+            </div>
+
+            {/* Seat Types */}
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Seat Types</label>
+
+              {form.metadata.seat_types?.map((seat: string, i: number) => (
+                <div key={i} className="flex gap-2 mb-2">
+                  <input
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                    placeholder="Seat Type (Economy, Business, First Class)"
+                    value={seat || ""}
+                    onChange={(e) => {
+                      const updated = [...form.metadata.seat_types];
+                      updated[i] = e.target.value;
+                      handleMetadataChange("seat_types", updated);
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = form.metadata.seat_types.filter(
+                        (_: string, index: number) => index !== i
+                      );
+                      handleMetadataChange("seat_types", updated);
+                    }}
+                    className="text-red-500 text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleMetadataChange("seat_types", [
+                    ...form.metadata.seat_types,
+                    ""
+                  ])
+                }
+                className="text-primary text-sm"
+              >
+                + Add Seat Type
+              </button>
+            </div>
+
+            {/* Popular Routes */}
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Popular Routes</label>
+
+              {form.metadata.popular_routes?.map((route: string, i: number) => (
+                <div key={i} className="flex gap-2 mb-2">
+                  <input
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                    placeholder="Example: Dubai → Paris"
+                    value={route || ""}
+                    onChange={(e) => {
+                      const updated = [...form.metadata.popular_routes];
+                      updated[i] = e.target.value;
+                      handleMetadataChange("popular_routes", updated);
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = form.metadata.popular_routes.filter(
+                        (_: string, index: number) => index !== i
+                      );
+                      handleMetadataChange("popular_routes", updated);
+                    }}
+                    className="text-red-500 text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleMetadataChange("popular_routes", [
+                    ...form.metadata.popular_routes,
+                    ""
+                  ])
+                }
+                className="text-primary text-sm"
+              >
+                + Add Route
+              </button>
+            </div>
+          </div>
+        )}
+        {form.category_slug === "car_driver" && (
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Car & Driver Details</h3>
+
+            {/* ---------- Car Basic ---------- */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2">Car Basic</label>
+
+              {/* Doors */}
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 mb-2"
+                placeholder="Number of Doors"
+                value={form.metadata.car_basic?.doors || ""}
+                onChange={(e) =>
+                  handleNestedMetadata("car_basic", "doors", e.target.value)
+                }
+              />
+
+              {/* Seats */}
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 mb-2"
+                placeholder="Number of Seats"
+                value={form.metadata.car_basic?.seats || ""}
+                onChange={(e) =>
+                  handleNestedMetadata("car_basic", "seats", e.target.value)
+                }
+              />
+
+              {/* Fuel */}
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 mb-2"
+                placeholder="Fuel Type (Petrol / Diesel / Hybrid)"
+                value={form.metadata.car_basic?.fuel || ""}
+                onChange={(e) =>
+                  handleNestedMetadata("car_basic", "fuel", e.target.value)
+                }
+              />
+            </div>
+
+            {/* ---------- Chauffeur ---------- */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2">Chauffeur</label>
+
+              {/* Name */}
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 mb-2"
+                placeholder="Chauffeur Name"
+                value={form.metadata.chauffeur?.name || ""}
+                onChange={(e) =>
+                  handleNestedMetadata("chauffeur", "name", e.target.value)
+                }
+              />
+
+              {/* Contact */}
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                placeholder="Contact / Message Handle"
+                value={form.metadata.chauffeur?.contact || ""}
+                onChange={(e) =>
+                  handleNestedMetadata("chauffeur", "contact", e.target.value)
+                }
+              />
+            </div>
           </div>
         )}
 
         {/* Step 3: Contact Info */}
         {currentStep === 3 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-             <h2 className="text-xl font-medium mb-4">Contact Information</h2>
-            
+            <h2 className="text-xl font-medium mb-4">Contact Information</h2>
+
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">Full Address</label>
               <textarea
@@ -424,7 +982,7 @@ export default function AddVendorPage() {
                 />
               </div>
 
-               <div className="space-y-2">
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">WhatsApp Number</label>
                 <input
                   className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
@@ -435,7 +993,7 @@ export default function AddVendorPage() {
                 />
               </div>
 
-               <div className="col-span-full space-y-2">
+              <div className="col-span-full space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">Website</label>
                 <input
                   className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
@@ -465,24 +1023,24 @@ export default function AddVendorPage() {
 
           {currentStep < steps.length ? (
             <button
-                onClick={nextStep}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-primary/20"
+              onClick={nextStep}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-primary/20"
             >
-                Next Step
-                <ArrowRight className="w-4 h-4" />
+              Next Step
+              <ArrowRight className="w-4 h-4" />
             </button>
           ) : (
             <button
-                onClick={submit}
-                className="bg-[#FF7F41] hover:bg-[#FF7F41]/90 text-white px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-[#FF7F41]/20"
+              onClick={submit}
+              className="bg-[#FF7F41] hover:bg-[#FF7F41]/90 text-white px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-[#FF7F41]/20"
             >
-                <Check className="w-4 h-4" />
-                Save Vendor
+              <Check className="w-4 h-4" />
+              Save Vendor
             </button>
           )}
         </div>
 
       </div>
-    </div>
+    </div >
   );
 }

@@ -13,9 +13,11 @@ import {
 interface VendorRowProps {
   vendor: Vendor;
   index?: number;
+  onEdit?: () => void;
 }
 
-export default function VendorRow({ vendor, index = 0 }: VendorRowProps) {
+export default function VendorRow({ vendor, index = 0, onEdit }: VendorRowProps) {
+  console.log("Rendering VendorRow for:", vendor);
   return (
     <tr 
       className="hover:bg-surface-hover/50 transition-colors duration-200 group"
@@ -91,6 +93,7 @@ export default function VendorRow({ vendor, index = 0 }: VendorRowProps) {
           <button 
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
             title="Edit"
+            onClick={onEdit}
           >
             <Pencil className="w-4 h-4" />
           </button>

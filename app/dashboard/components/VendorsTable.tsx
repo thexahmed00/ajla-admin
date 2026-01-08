@@ -1,9 +1,14 @@
+"use client";
 import VendorRow from "./VendorRow";
 import ImageWithFallback from "./ImageWithFallback";
 import { Vendor } from "../types/vendor";
 import { Store, Star, CheckCircle, XCircle } from "lucide-react";
+import { useState } from "react";
+import EditVendorModal from "./EditVendorModal";
 
 export default function VendorsTable({ vendors }: { vendors: Vendor[] }) {
+  const [editVendor, setEditVendor] = useState<Vendor | null>(null);
+
   return (
     <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
       {/* Desktop Table */}
@@ -19,10 +24,17 @@ export default function VendorsTable({ vendors }: { vendors: Vendor[] }) {
         </thead>
         <tbody className="divide-y divide-border/50">
           {vendors.map((vendor, index) => (
-            <VendorRow key={vendor.id} vendor={vendor} index={index} />
+            <VendorRow key={vendor.id} vendor={vendor} index={index}  />
           ))}
         </tbody>
       </table>
+      {/* {editVendor && (
+  <EditVendorModal
+    vendor={editVendor}
+    onClose={() => setEditVendor(null)}
+    // refresh={loadVendors}
+  />
+)} */}
 
       {/* Mobile Cards */}
       <div className="md:hidden divide-y divide-border/50">
@@ -37,11 +49,10 @@ export default function VendorsTable({ vendors }: { vendors: Vendor[] }) {
             <div className="space-y-2 flex-grow min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="font-medium text-text-main truncate">{vendor.name}</h3>
-                <span className={`text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shrink-0 ${
-                  vendor.status === 'Active' 
-                    ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
+                <span className={`text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shrink-0 ${vendor.status === 'Active'
+                    ? 'bg-green-500/10 text-green-500 border border-green-500/20'
                     : 'bg-red-500/10 text-red-500 border border-red-500/20'
-                }`}>
+                  }`}>
                   {vendor.status === 'Active' ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                   {vendor.status}
                 </span>
@@ -61,6 +72,8 @@ export default function VendorsTable({ vendors }: { vendors: Vendor[] }) {
             </div>
           </div>
         ))}
+
+
       </div>
     </div>
   );

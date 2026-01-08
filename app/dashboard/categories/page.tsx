@@ -1,77 +1,52 @@
 "use client";
-import { useState } from "react";
-import { 
-  Plane, 
-  Ship, 
-  Building2, 
-  UtensilsCrossed, 
-  PartyPopper, 
-  Sparkles,
+import { useEffect, useState } from "react";
+import {
   LayoutGrid,
   List,
-  Grid3X3
+  Grid3X3,
+  Plus
 } from "lucide-react";
 import CategoryCard from "../components/CategoryCard";
+import AddCategoryModal from "../components/AddCategoryModal";
 
-const categories = [
-  {
-    id: 1,
-    icon: Plane,
-    title: "Private Jets",
-    slug: "private-jets",
-    description: "Luxury private aviation services",
-    vendorCount: 8,
-    gradient: "linear-gradient(135deg, hsl(210 80% 60%) 0%, hsl(230 70% 50%) 100%)",
-  },
-  {
-    id: 2,
-    icon: Ship,
-    title: "Yacht Charters",
-    slug: "yacht",
-    description: "Exclusive yacht rentals and cruises",
-    vendorCount: 5,
-    gradient: "linear-gradient(135deg, hsl(175 70% 50%) 0%, hsl(190 60% 45%) 100%)",
-  },
-  {
-    id: 3,
-    icon: Building2,
-    title: "Hotels",
-    slug: "hotels",
-    description: "Premium hotels and resorts",
-    vendorCount: 12,
-    gradient: "linear-gradient(135deg, hsl(40 80% 55%) 0%, hsl(30 70% 45%) 100%)",
-  },
-  {
-    id: 4,
-    icon: UtensilsCrossed,
-    title: "Restaurants",
-    slug: "restaurants",
-    description: "Fine dining experiences worldwide",
-    vendorCount: 24,
-    gradient: "linear-gradient(135deg, hsl(280 60% 65%) 0%, hsl(260 50% 55%) 100%)",
-  },
-  {
-    id: 5,
-    icon: PartyPopper,
-    title: "Events",
-    slug: "events",
-    description: "Exclusive events and celebrations",
-    vendorCount: 15,
-    gradient: "linear-gradient(135deg, hsl(160 60% 50%) 0%, hsl(140 50% 45%) 100%)",
-  },
-  {
-    id: 6,
-    icon: Sparkles,
-    title: "Experiences",
-    slug: "experiences",
-    description: "Unique curated experiences",
-    vendorCount: 18,
-    gradient: "linear-gradient(135deg, hsl(350 70% 60%) 0%, hsl(15 60% 55%) 100%)",
-  },
-];
+const PLACEHOLDER =
+  "https://via.placeholder.com/150?text=No+Icon";
 
 const Categories = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("access_token");
+
+      const res = await fetch("/api/categories", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      console.log("Fetched Categories:", data);
+
+      if (res.ok) {
+        setCategories(data.categories || []);
+      } else {
+        console.log("Failed to load categories");
+      }
+    } catch (err) {
+      console.error("Fetch error", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -82,63 +57,88 @@ const Categories = () => {
             <Grid3X3 className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-text-main">
-              Categories
-            </h1>
-            <p className="mt-1 text-text-muted text-sm md:text-base">
+            <h1 className="text-2xl md:text-3xl font-bold">Categories</h1>
+            <p className="mt-1 text-sm md:text-base text-gray-500">
               Browse service categories
             </p>
           </div>
         </div>
 
-        {/* View toggle */}
-        <div className="flex overflow-hidden rounded-xl border border-border bg-surface p-1">
+        {/* Add + View Toggle */}
+        <div className="flex overflow-hidden rounded-xl border bg-surface p-1">
           <button
-            className={`px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm font-medium ${
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl 
+              bg-gradient-to-r from-primary to-primary-hover text-white font-semibold mr-2"
+            onClick={() => setOpen(true)}
+          >
+            <Plus className="w-5 h-5" />
+            Add Category
+          </button>
+
+          <button
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
               viewMode === "grid"
                 ? "bg-primary/10 text-primary"
-                : "text-text-muted hover:text-text-main hover:bg-surface-hover"
+                : "text-gray-500"
             }`}
             onClick={() => setViewMode("grid")}
           >
             <LayoutGrid className="h-4 w-4" />
-            <span className="hidden sm:inline">Grid</span>
+            Grid
           </button>
+
           <button
-            className={`px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm font-medium ${
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
               viewMode === "list"
                 ? "bg-primary/10 text-primary"
-                : "text-text-muted hover:text-text-main hover:bg-surface-hover"
+                : "text-gray-500"
             }`}
             onClick={() => setViewMode("list")}
           >
             <List className="h-4 w-4" />
-            <span className="hidden sm:inline">List</span>
+            List
           </button>
         </div>
       </div>
 
+      {/* Loader */}
+      {loading && (
+        <p className="text-center text-gray-500 py-10">
+          Loading categories...
+        </p>
+      )}
+
       {/* Categories Grid */}
-      <div
-        className={`grid gap-4 md:gap-6 ${
-          viewMode === "grid"
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            : "grid-cols-1"
-        }`}
-      >
-        {categories.map((category) => (
-          <div key={category.id}>
+      {!loading && (
+        <div
+          className={`grid gap-4 md:gap-6 ${
+            viewMode === "grid"
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              : "grid-cols-1"
+          }`}
+        >
+          {categories.map((cat) => (
             <CategoryCard
-              icon={category.icon}
-              title={category.title}
-              slug={category.slug}
-              description={category.description}
-              vendorCount={category.vendorCount}
-              gradient={category.gradient}
+              key={cat.id}
+              icon={cat.icon_url || PLACEHOLDER}
+              title={cat.name}
+              slug={cat.slug}
+              vendorCount={0}
+              description=""
+              gradient=""
             />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* Modal */}
+      <AddCategoryModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={async () => {
+          await fetchCategories(); // refresh after add
+        }}
+      />
     </div>
   );
 };
