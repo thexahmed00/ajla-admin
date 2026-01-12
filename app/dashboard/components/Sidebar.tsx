@@ -3,13 +3,14 @@
 import { logout } from "@/app/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut, Book } from "lucide-react";
 
 const menu = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Conversations", href: "/dashboard/conversations/1", icon: MessageSquare },
   { name: "Vendors", href: "/dashboard/vendors", icon: Store },
   { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
+  { name: "Bookings", href: "/dashboard/bookings", icon: Book },
 ];
 
 export default function Sidebar() {

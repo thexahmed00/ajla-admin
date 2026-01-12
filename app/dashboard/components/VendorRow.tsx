@@ -9,6 +9,7 @@ import {
   Trash2,
   Store
 } from "lucide-react";
+import Link from "next/link";
 
 interface VendorRowProps {
   vendor: Vendor;
@@ -17,7 +18,7 @@ interface VendorRowProps {
 }
 
 export default function VendorRow({ vendor, index = 0, onEdit }: VendorRowProps) {
-  console.log("Rendering VendorRow for:", vendor);
+  // console.log("Rendering VendorRow for:", vendor);
   return (
     <tr 
       className="hover:bg-surface-hover/50 transition-colors duration-200 group"
@@ -90,13 +91,16 @@ export default function VendorRow({ vendor, index = 0, onEdit }: VendorRowProps)
             <Eye className="w-4 h-4" />
           </button>
 
-          <button 
+          <Link 
+            href={`vendors/addvendor/${vendor.id}`}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
             title="Edit"
-            onClick={onEdit}
+            // onClick={() => {
+            //   console.log("vendor selected vendor",vendor)
+            // }}
           >
             <Pencil className="w-4 h-4" />
-          </button>
+          </Link>
 
           <button 
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 transition-all duration-200 cursor-pointer"

@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Check, ArrowRight, ArrowLeft } from "lucide-react";
-import { metaDefaults } from "./metaSchema";
+import { metaDefaults } from "../metaSchema";
+import { useParams } from "next/navigation";
 
 type Dish = {
   category: string;
@@ -18,6 +19,11 @@ const categories = [
 ];
 
 export default function AddVendorPage() {
+  const { id } = useParams();
+  const vendorId = Array.isArray(id) ? id[0] : id;
+
+  console.log("Vendor ID:", vendorId);
+  const isEdit = Boolean(id);
   type Metadata = {
     [key: string]: any;
   };
@@ -35,6 +41,7 @@ export default function AddVendorPage() {
     description: string;
     fullDescription: string;
     address: string;
+    city: string;
     phone: string;
     whatsapp: string;
     website: string;
@@ -47,6 +54,7 @@ export default function AddVendorPage() {
     description: "",
     fullDescription: "",
     address: "",
+    city: "",
     phone: "",
     whatsapp: "",
     website: "",
@@ -59,6 +67,16 @@ export default function AddVendorPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+  };
+
+
+  // 
+  const handleCategoryChange = (slug: string) => {
+    setForm(prev => ({
+      ...prev,
+      category_slug: slug,
+      metadata: metaDefaults[slug] || {}
+    }));
   };
 
 
@@ -82,13 +100,37 @@ export default function AddVendorPage() {
       };
 
       console.log("Sending →", payload);
-
-      const res = await fetch("/api/vendors", {
-        method: "POST",
-        body: JSON.stringify(payload)
+      if (isEdit) {
+        const updatePayload = {
+          id:vendorId,
+        ...form,
+        // rating: Number(form.rating),
+        token
+      };
+        const res = await fetch("/api/updatevendor", {
+        method: "PUT",
+        body: JSON.stringify(updatePayload)
       });
 
       const data = await res.json();
+
+      if (!res.ok) {
+        alert(data?.message || "Failed to update vendor");
+        return;
+      }
+
+      alert("Vendor updated successfully!");
+      console.log("Vendor Response:", data);
+      }
+      
+      else{
+        console.log("else block")
+        const res = await fetch("/api/vendors", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      console.log("Data received",data)
 
       if (!res.ok) {
         alert(data?.message || "Failed to create vendor");
@@ -97,6 +139,7 @@ export default function AddVendorPage() {
 
       alert("Vendor created successfully!");
       console.log("Vendor Response:", data);
+      }
 
     } catch (error) {
       console.error(error);
@@ -166,6 +209,77 @@ export default function AddVendorPage() {
   );
 
 
+  // handling update form if id is present
+  const deepMerge = (target: any, source: any) => {
+    if (!source) return target;
+
+    const output = { ...target };
+
+    Object.keys(source).forEach(key => {
+      if (
+        typeof source[key] === "object" &&
+        !Array.isArray(source[key]) &&
+        source[key] !== null
+      ) {
+        output[key] = deepMerge(target[key] || {}, source[key]);
+      } else {
+        output[key] = source[key];
+      }
+    });
+
+    return output;
+  };
+
+  const mergeMetadata = (slug: string, existingMeta: any) => {
+    const def = metaDefaults[slug] || {};
+
+    return deepMerge(def, existingMeta || {});
+  };
+
+
+ useEffect(() => {
+  if (!isEdit) return;
+
+  const fetchVendor = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+
+      const vendorId = Array.isArray(id) ? id[0] : id;
+
+      const res = await fetch(`/api/vendordetails?id=${vendorId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      console.log("Vendor Details:", data);
+
+      setForm({
+        name: data.name,
+        category_slug: data.category_slug,
+        description: data.description,
+        fullDescription: data.description,
+        address: data.address,
+        city: data.city,
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        website: data.website,
+        rating: String(data.rating),
+        status: data.is_active ? "active" : "inactive",
+        metadata: data.metadata || {}
+      });
+
+    } catch (error) {
+      console.error("Failed to load vendor", error);
+    }
+  };
+
+  fetchVendor();
+}, [id]);
+
+
+
 
 
 
@@ -192,12 +306,13 @@ export default function AddVendorPage() {
                     name="category_slug"
                     value={form.category_slug}
                     onChange={(e) => {
-                      const slug = e.target.value;
-                      setForm(prev => ({
-                        ...prev,
-                        category_slug: slug,
-                        metadata: metaDefaults[slug] || {}
-                      }));
+                      // const slug = e.target.value;
+                      // setForm(prev => ({
+                      //   ...prev,
+                      //   category_slug: slug,
+                      //   metadata: metaDefaults[slug] || {}
+                      // }));
+                      handleCategoryChange(e.target.value)
                     }}
                   >
                     <option value="">Select a category</option>
@@ -393,6 +508,9 @@ export default function AddVendorPage() {
                 </div>
               </div>
             )}
+
+
+
             {/* Car Rental Form */}
             {form.category_slug === "car_renting" && (
               <div className="bg-card border border-border rounded-xl p-8 mt-6">
@@ -969,6 +1087,16 @@ export default function AddVendorPage() {
                 onChange={handleChange}
               />
             </div>
+            <div className="col-span-full space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">City Name</label>
+                <input
+                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                  name="city"
+                  placeholder="Riyadh"
+                  value={form.city}
+                  onChange={handleChange}
+                />
+              </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -1035,7 +1163,7 @@ export default function AddVendorPage() {
               className="bg-[#FF7F41] hover:bg-[#FF7F41]/90 text-white px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-[#FF7F41]/20"
             >
               <Check className="w-4 h-4" />
-              Save Vendor
+              {isEdit?"Update Vendor":"Save Vendor"}
             </button>
           )}
         </div>

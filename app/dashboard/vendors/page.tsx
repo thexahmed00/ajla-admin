@@ -10,11 +10,12 @@ import { Plus, Store } from "lucide-react";
 export default function VendorsPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [slug,setSlug] = useState("");
 
   useEffect(() => {
     async function loadVendors() {
       try {
-        const data = await fetchVendors();
+        const data = await fetchVendors(slug);
 
         const mapped: Vendor[] = data.vendors.map((v: any) => ({
           id: v.id,
@@ -34,7 +35,7 @@ export default function VendorsPage() {
     }
 
     loadVendors();
-  }, []);
+  }, [slug]);
 
   return (
     <div className="space-y-6 overflow-x-hidden max-w-7xl mx-auto">
@@ -69,7 +70,7 @@ export default function VendorsPage() {
 
       {/* Toolbar */}
       <div>
-        <VendorsToolbar />
+        <VendorsToolbar onCategoryChange={setSlug} />
       </div>
 
       {/* Table */}
