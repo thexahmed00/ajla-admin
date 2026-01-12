@@ -102,43 +102,43 @@ export default function AddVendorPage() {
       console.log("Sending →", payload);
       if (isEdit) {
         const updatePayload = {
-          id:vendorId,
-        ...form,
-        // rating: Number(form.rating),
-        token
-      };
+          id: vendorId,
+          ...form,
+          // rating: Number(form.rating),
+          token
+        };
         const res = await fetch("/api/updatevendor", {
-        method: "PUT",
-        body: JSON.stringify(updatePayload)
-      });
+          method: "PUT",
+          body: JSON.stringify(updatePayload)
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
-        alert(data?.message || "Failed to update vendor");
-        return;
+        if (!res.ok) {
+          alert(data?.message || "Failed to update vendor");
+          return;
+        }
+
+        alert("Vendor updated successfully!");
+        console.log("Vendor Response:", data);
       }
 
-      alert("Vendor updated successfully!");
-      console.log("Vendor Response:", data);
-      }
-      
-      else{
+      else {
         console.log("else block")
         const res = await fetch("/api/vendors", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      console.log("Data received",data)
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        console.log("Data received", data)
 
-      if (!res.ok) {
-        alert(data?.message || "Failed to create vendor");
-        return;
-      }
+        if (!res.ok) {
+          alert(data?.message || "Failed to create vendor");
+          return;
+        }
 
-      alert("Vendor created successfully!");
-      console.log("Vendor Response:", data);
+        alert("Vendor created successfully!");
+        console.log("Vendor Response:", data);
       }
 
     } catch (error) {
@@ -237,49 +237,77 @@ export default function AddVendorPage() {
   };
 
 
- useEffect(() => {
-  if (!isEdit) return;
+  useEffect(() => {
+    if (!isEdit) return;
 
-  const fetchVendor = async () => {
-    try {
-      const token = localStorage.getItem("access_token");
+    const fetchVendor = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
 
-      const vendorId = Array.isArray(id) ? id[0] : id;
+        const vendorId = Array.isArray(id) ? id[0] : id;
 
-      const res = await fetch(`/api/vendordetails?id=${vendorId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const res = await fetch(`/api/vendordetails?id=${vendorId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      const data = await res.json();
-      console.log("Vendor Details:", data);
+        const data = await res.json();
+        console.log("Vendor Details:", data);
 
-      setForm({
-        name: data.name,
-        category_slug: data.category_slug,
-        description: data.description,
-        fullDescription: data.description,
-        address: data.address,
-        city: data.city,
-        phone: data.phone,
-        whatsapp: data.whatsapp,
-        website: data.website,
-        rating: String(data.rating),
-        status: data.is_active ? "active" : "inactive",
-        metadata: data.metadata || {}
-      });
+        setForm({
+          name: data.name,
+          category_slug: data.category_slug,
+          description: data.description,
+          fullDescription: data.description,
+          address: data.address,
+          city: data.city,
+          phone: data.phone,
+          whatsapp: data.whatsapp,
+          website: data.website,
+          rating: String(data.rating),
+          status: data.is_active ? "active" : "inactive",
+          metadata: data.metadata || {}
+        });
 
-    } catch (error) {
-      console.error("Failed to load vendor", error);
-    }
+      } catch (error) {
+        console.error("Failed to load vendor", error);
+      }
+    };
+
+    fetchVendor();
+  }, [id]);
+
+  const SAUDI_CITIES = [
+    "Riyadh",
+    "Jeddah",
+    "Mecca",
+    "Medina",
+    "Dammam",
+    "Khobar",
+    "Dhahran",
+    "Taif",
+    "Tabuk",
+    "Abha",
+    "Jazan",
+    "Hail",
+    "Buraidah",
+    "Hofuf",
+    "Najran",
+  ];
+
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filteredCities = SAUDI_CITIES.filter(c =>
+    c.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleSelect = (city: string) => {
+    setForm({ ...form, city });
+    setOpen(false);
+    setSearch("");
   };
-
-  fetchVendor();
-}, [id]);
-
-
-
 
 
 
@@ -1087,16 +1115,41 @@ export default function AddVendorPage() {
                 onChange={handleChange}
               />
             </div>
-            <div className="col-span-full space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">City Name</label>
-                <input
-                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                  name="city"
-                  placeholder="Riyadh"
-                  value={form.city}
-                  onChange={handleChange}
-                />
+             <div className="col-span-full space-y-2 relative">
+      <label className="text-sm font-medium text-muted-foreground">
+        City Name
+      </label>
+
+      <input
+        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+        placeholder="Select or search city..."
+        value={search || form.city}
+        onFocus={() => setOpen(true)}
+        onClick={() => setOpen(true)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setOpen(true);
+        }}
+      />
+
+      {open && (
+        <div className="absolute left-0 right-0 mt-1 bg-black border border-border rounded-lg max-h-60 overflow-auto shadow-md z-30">
+          {filteredCities.length === 0 ? (
+            <p className="p-3 text-sm text-muted-foreground">No city found</p>
+          ) : (
+            filteredCities.map((city) => (
+              <div
+                key={city}
+                onClick={() => handleSelect(city)}
+                className="px-4 py-2 cursor-pointer hover:bg-primary/10"
+              >
+                {city}
               </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -1163,7 +1216,7 @@ export default function AddVendorPage() {
               className="bg-[#FF7F41] hover:bg-[#FF7F41]/90 text-white px-8 py-2.5 rounded-lg flex items-center gap-2 font-medium transition-all shadow-lg shadow-[#FF7F41]/20"
             >
               <Check className="w-4 h-4" />
-              {isEdit?"Update Vendor":"Save Vendor"}
+              {isEdit ? "Update Vendor" : "Save Vendor"}
             </button>
           )}
         </div>

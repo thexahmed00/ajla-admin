@@ -33,18 +33,26 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [conversationsData, setConversationsData] = useState<ConversationUI[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [convoCount, setConvoCount] = useState<number>(0);
   useEffect(() => {
     if (!isAdmin()) router.replace("/login");
   }, []);
 
   useEffect(() => {
     async function loadStats() {
+      let token = localStorage.getItem("access_token")
       try {
         const data = await fetchDashboardStats();
-        console.log("stats data", data);
+        const res = await fetch("http://44.206.101.8/api/v1/admin/conversations?skip=0&limit=20",{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        let convoData = await res.json();
+        console.log("convoData", convoData);
+        setConvoCount(convoData.total)
 
-        const conversations: ConversationUI[] = data.conversations.map(
+        const conversations: ConversationUI[] = convoData.conversations.map(
           (item: ConversationApi) => ({
             id: String(item.id),
             userName: item.vendor_name ?? item.title,
@@ -98,7 +106,7 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <StatCard title="Total Conversations" value={stats?.totalConversations ?? "0"} icon={MessageSquare} />
+        <StatCard title="Total Conversations" value={convoCount ?? "0"} icon={MessageSquare} />
         <StatCard title="Active Vendors" value={stats?.activeVendors ?? "0"} icon={Users} />
         <StatCard title="Service Categories" value={stats?.serviceCategories ?? "0"} icon={Grid3X3} />
         <StatCard title="Availability" value={stats?.availability ?? "0%"} icon={Clock} />
