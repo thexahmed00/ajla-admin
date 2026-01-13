@@ -26,7 +26,7 @@ export default function VendorRow({ vendor, index = 0, onDelete }: VendorRowProp
 
   try {
     const response = await fetch(
-      `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=false`,
+      `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=true`,
       {
         method: "DELETE",
         headers: {
@@ -43,6 +43,34 @@ export default function VendorRow({ vendor, index = 0, onDelete }: VendorRowProp
 
     // Tell parent to remove vendor from UI
     onDelete?.(vendorId);
+
+  } catch (error) {
+    console.error("Error deleting vendor:", error);
+    alert("Failed to delete vendor");
+  }
+};
+
+const hideVendor = async (vendorId: number) => {
+  const token = localStorage.getItem("access_token");
+
+  try {
+    const response = await fetch(
+      `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=false`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Delete failed: ${response.status}`);
+    }
+
+    console.log("Vendor deleted successfully");
+
+    
 
   } catch (error) {
     console.error("Error deleting vendor:", error);
@@ -122,6 +150,7 @@ export default function VendorRow({ vendor, index = 0, onDelete }: VendorRowProp
       <td className="px-6 py-4">
         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <button 
+          onClick={()=>hideVendor(vendor.id)}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
             title="View"
           >
