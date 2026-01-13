@@ -1,20 +1,48 @@
+import { time } from "console";
+import { Star } from "lucide-react";
+
 export const metaDefaults : Record<string, any> = {
   restaurants: {
     cuisine: "",
-    hours: {
-    "mon-sun": ""
-  },
-    dishes: [
-    { category: "", name: "" }
-  ],
+    hours: [
+      {name:"",time:""}
+    ],
+    courses:[
+      {
+        name: "",
+        dishes:[
+          {name:"",image:"",price:""}
+        ]
+      }
+    ]
   },
 
   hotels: {
-    amenities: [""],
+    star_rating: 5,
+    check_in: "",
+    check_out: "",
+    amenities: [
+      {
+        name: "",
+        icon:"",
+        subtitle:"",
+      }
+    ],
+    nearby_attractions: [
+      {
+        name: "",
+        distance: "",
+        icon:"",
+        category:""
+      }
+    ],
     rooms: [
       {
-        type: "",
+        name: "",
         price: "",
+        image:"",
+        description:"",
+        capacity:"",
       },
     ],
   },

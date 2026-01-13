@@ -11,6 +11,9 @@ export default function VendorsPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
   const [slug,setSlug] = useState("");
+  const handleDeleteVendor = (id: number) => {
+  setVendors(prev => prev.filter(v => v.id !== id));
+};
 
   useEffect(() => {
     async function loadVendors() {
@@ -91,7 +94,7 @@ export default function VendorsPage() {
             </div>
           </div>
         ) : (
-          <VendorsTable vendors={vendors} />
+          <VendorsTable vendors={vendors} deleteVendor={handleDeleteVendor} />
         )}
       </div>
     </div>

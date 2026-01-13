@@ -14,10 +14,47 @@ import Link from "next/link";
 interface VendorRowProps {
   vendor: Vendor;
   index?: number;
-  onEdit?: () => void;
+  onDelete?: (id: number) => void;
 }
 
-export default function VendorRow({ vendor, index = 0, onEdit }: VendorRowProps) {
+
+export default function VendorRow({ vendor, index = 0, onDelete }: VendorRowProps) {
+
+
+  const deleteVendor = async (vendorId: number) => {
+  const token = localStorage.getItem("access_token");
+
+  try {
+    const response = await fetch(
+      `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=false`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Delete failed: ${response.status}`);
+    }
+
+    console.log("Vendor deleted successfully");
+
+    // Tell parent to remove vendor from UI
+    onDelete?.(vendorId);
+
+  } catch (error) {
+    console.error("Error deleting vendor:", error);
+    alert("Failed to delete vendor");
+  }
+};
+
+
+
+
+
+
   // console.log("Rendering VendorRow for:", vendor);
   return (
     <tr 
@@ -105,6 +142,7 @@ export default function VendorRow({ vendor, index = 0, onEdit }: VendorRowProps)
           <button 
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 transition-all duration-200 cursor-pointer"
             title="Delete"
+            onClick={()=>deleteVendor(vendor.id)}
           >
             <Trash2 className="w-4 h-4" />
           </button>

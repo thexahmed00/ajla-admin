@@ -6,8 +6,13 @@ import { Store, Star, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
 import EditVendorModal from "./EditVendorModal";
 
-export default function VendorsTable({ vendors }: { vendors: Vendor[] }) {
+
+
+
+export default function VendorsTable({ vendors, deleteVendor }: { vendors: Vendor[]; deleteVendor: (id: number) => void }) {
   const [editVendor, setEditVendor] = useState<Vendor | null>(null);
+  
+
 
   return (
     <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
@@ -24,7 +29,7 @@ export default function VendorsTable({ vendors }: { vendors: Vendor[] }) {
         </thead>
         <tbody className="divide-y divide-border/50">
           {vendors.map((vendor, index) => (
-            <VendorRow key={vendor.id} vendor={vendor} index={index}  />
+            <VendorRow key={vendor.id} vendor={vendor} index={index} onDelete={deleteVendor}  />
           ))}
         </tbody>
       </table>

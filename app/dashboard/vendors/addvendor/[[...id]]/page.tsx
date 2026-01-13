@@ -427,115 +427,191 @@ export default function AddVendorPage() {
             {/* Category Specific Fields */}
             {/* Restaurants Form */}
             {form.category_slug === "restaurants" && (
-              <div className="mt-8 border-t border-border pt-6 space-y-6">
-                <h3 className="text-lg font-medium text-primary">Restaurant Specifics</h3>
+  <div className="mt-8 border-t border-border pt-6 space-y-6">
+    <h3 className="text-lg font-medium text-primary">Restaurant Specifics</h3>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">Cuisine Type</label>
-                  <input
-                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
-                    value={form.metadata.cuisine || ''}
-                    onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
-                    placeholder="e.g. Italian, Japanese"
-                  />
-                </div>
+    {/* CUISINE */}
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-muted-foreground">Cuisine Type</label>
+      <input
+        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
+        value={form.metadata.cuisine || ""}
+        onChange={(e) => handleMetadataChange("cuisine", e.target.value)}
+        placeholder="e.g. Italian, Mediterranean"
+      />
+    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Opening Days</label>
-                    <input
-                      className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
-                      placeholder="e.g. Mon-Sun"
-                      value={(Object.keys(form.metadata.hours || {})[0] as string) || "mon-sun"}
-                      onChange={(e) => {
-                        const oldKey = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
-                        const timing = Object.values(form.metadata.hours || {})[0] || "";
+    {/* HOURS ARRAY */}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium text-muted-foreground">Opening Hours</label>
 
-                        handleMetadataChange("hours", {
-                          [e.target.value]: timing
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Opening Hours</label>
-                    <input
-                      className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:border-primary transition-all outline-none"
-                      placeholder="e.g. 10 AM - 11 PM"
-                      value={(Object.values(form.metadata.hours || {})[0] as string) || ""}
-                      onChange={(e) => {
-                        const key = Object.keys(form.metadata.hours || {})[0] || "mon-sun";
+        <button
+          type="button"
+          onClick={() =>
+            handleMetadataChange("hours", [
+              ...(form.metadata.hours || []),
+              { name: "", time: "" }
+            ])
+          }
+          className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full"
+        >
+          + Add Hours Slot
+        </button>
+      </div>
 
-                        handleMetadataChange("hours", {
-                          [key]: e.target.value
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
+      {(form.metadata.hours || []).map((hour: any, i: number) => (
+        <div key={i} className="grid grid-cols-2 gap-3 items-center">
+          <input
+            className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+            placeholder="Day Range (e.g. Mon-Thu)"
+            value={hour?.name || ""}
+            onChange={(e) => {
+              const updated = [...(form.metadata.hours || [])];
+              updated[i].name = e.target.value;
+              handleMetadataChange("hours", updated);
+            }}
+          />
 
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <label className="text-sm font-medium text-muted-foreground">Featured Dishes</label>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleMetadataChange("dishes", [
-                          ...(form.metadata.dishes || []),
-                          { category: "", name: "" },
-                        ])
-                      }
-                      className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
-                    >
-                      + Add Dish
-                    </button>
-                  </div>
+          <input
+            className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+            placeholder="Time (e.g. 12 PM - 11 PM)"
+            value={hour?.time || ""}
+            onChange={(e) => {
+              const updated = [...(form.metadata.hours || [])];
+              updated[i].time = e.target.value;
+              handleMetadataChange("hours", updated);
+            }}
+          />
 
-                  {(form.metadata.dishes || []).map((dish: any, i: number) => (
-                    <div key={i} className="flex gap-3">
-                      <input
-                        className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
-                        placeholder="Category (e.g. Starters)"
-                        value={dish?.category || ""}
-                        onChange={(e) => {
-                          const updated = [...(form.metadata.dishes || [])];
-                          if (!updated[i]) updated[i] = {};
-                          updated[i].category = e.target.value;
-                          handleMetadataChange("dishes", updated);
-                        }}
-                      />
-                      <input
-                        className="flex-1 bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary outline-none"
-                        placeholder="Dish Name"
-                        value={dish?.name || ""}
-                        onChange={(e) => {
-                          const updated = [...(form.metadata.dishes || [])];
-                          if (!updated[i]) updated[i] = {};
-                          updated[i].name = e.target.value;
-                          handleMetadataChange("dishes", updated);
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const updated = [...(form.metadata.dishes || [])];
-                          updated.splice(i, 1);
-                          handleMetadataChange("dishes", updated);
-                        }}
-                        className="text-muted-foreground hover:text-red-500"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
-                      </button>
-                    </div>
-                  ))}
-                  {(!form.metadata.dishes || form.metadata.dishes.length === 0) && (
-                    <div className="text-center py-4 bg-secondary/50 rounded-lg text-sm text-muted-foreground border border-dashed border-border">
-                      No dishes added yet.
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+          <button
+            type="button"
+            onClick={() => {
+              const updated = [...(form.metadata.hours || [])];
+              updated.splice(i, 1);
+              handleMetadataChange("hours", updated);
+            }}
+            className="text-red-500 text-sm col-span-2 text-left"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+    </div>
+
+    {/* COURSES + DISHES */}
+    <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <label className="text-sm font-medium text-muted-foreground">Courses</label>
+
+        <button
+          type="button"
+          onClick={() =>
+            handleMetadataChange("courses", [
+              ...(form.metadata.courses || []),
+              { name: "", dishes: [] }
+            ])
+          }
+          className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full"
+        >
+          + Add Course
+        </button>
+      </div>
+
+      {(form.metadata.courses || []).map((course: any, i: number) => (
+        <div key={i} className="border border-border rounded-lg p-4 space-y-3">
+          {/* COURSE NAME */}
+          <input
+            className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+            placeholder="Course Name (e.g. Appetizers)"
+            value={course?.name || ""}
+            onChange={(e) => {
+              const updated = [...(form.metadata.courses || [])];
+              updated[i].name = e.target.value;
+              handleMetadataChange("courses", updated);
+            }}
+          />
+
+          {/* ADD DISH BUTTON */}
+          <button
+            type="button"
+            onClick={() => {
+              const updated = [...(form.metadata.courses || [])];
+              updated[i].dishes = [...(updated[i].dishes || []), { name: "", image: "", price: "" }];
+              handleMetadataChange("courses", updated);
+            }}
+            className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full"
+          >
+            + Add Dish
+          </button>
+
+          {/* DISHES */}
+          {(course?.dishes || []).map((dish: any, j: number) => (
+            <div key={j} className="grid grid-cols-3 gap-3">
+              <input
+                className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+                placeholder="Dish Name"
+                value={dish?.name || ""}
+                onChange={(e) => {
+                  const updated = [...(form.metadata.courses || [])];
+                  updated[i].dishes[j].name = e.target.value;
+                  handleMetadataChange("courses", updated);
+                }}
+              />
+
+              <input
+                className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+                placeholder="Image URL"
+                value={dish?.image || ""}
+                onChange={(e) => {
+                  const updated = [...(form.metadata.courses || [])];
+                  updated[i].dishes[j].image = e.target.value;
+                  handleMetadataChange("courses", updated);
+                }}
+              />
+
+              <input
+                className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+                placeholder="Price (e.g 120 SAR)"
+                value={dish?.price || ""}
+                onChange={(e) => {
+                  const updated = [...(form.metadata.courses || [])];
+                  updated[i].dishes[j].price = e.target.value;
+                  handleMetadataChange("courses", updated);
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = [...(form.metadata.courses || [])];
+                  updated[i].dishes.splice(j, 1);
+                  handleMetadataChange("courses", updated);
+                }}
+                className="text-red-500 text-sm col-span-3 text-left"
+              >
+                Remove Dish
+              </button>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={() => {
+              const updated = [...(form.metadata.courses || [])];
+              updated.splice(i, 1);
+              handleMetadataChange("courses", updated);
+            }}
+            className="text-red-500 text-sm"
+          >
+            Remove Course
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
 
 
 
@@ -700,33 +776,88 @@ export default function AddVendorPage() {
             {form.category_slug === "hotels" && (
               <div>
                 <h3 className="text-lg font-semibold mb-3">Hotel Details</h3>
+                <div>
+                  <label className="block text-sm mb-1">Star Rating</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={7}
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                    value={form.metadata.star_rating || ""}
+                    onChange={(e) =>
+                      handleMetadataChange("star_rating", Number(e.target.value))
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-1">Check-In</label>
+                  <input
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                    value={form.metadata.check_in || ""}
+                    placeholder="3:00 PM"
+                    onChange={(e) => handleMetadataChange("check_in", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-1">Check-Out</label>
+                  <input
+                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+                    value={form.metadata.check_out || ""}
+                    placeholder="12:00 PM"
+                    onChange={(e) => handleMetadataChange("check_out", e.target.value)}
+                  />
+                </div>
                 {/* AMENITIES */}
                 <div className="mb-6">
                   <label className="block text-sm mb-2">Amenities</label>
 
-                  {form.metadata.amenities?.map((amenity: string, i: number) => (
-                    <div key={i} className="flex gap-2 mb-2">
+                  {form.metadata.amenities?.map((a: any, i: any) => (
+                    <div key={i} className="grid grid-cols-3 gap-3 mb-3">
+
                       <input
-                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                        placeholder="Amenity (e.g. Pool, Gym)"
-                        value={amenity || ""}
+                        placeholder="Amenity Name"
+                        value={a.name || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
                         onChange={(e) => {
                           const updated = [...form.metadata.amenities];
-                          updated[i] = e.target.value;
+                          updated[i].name = e.target.value;
                           handleMetadataChange("amenities", updated);
                         }}
                       />
 
-                      {/* Remove amenity */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const updated = form.metadata.amenities.filter(
-                            (_: string, index: number) => index !== i
-                          );
+                      <input
+                        placeholder="Icon (wifi / pool / spa)"
+                        value={a.icon || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => {
+                          const updated = [...form.metadata.amenities];
+                          updated[i].icon = e.target.value;
                           handleMetadataChange("amenities", updated);
                         }}
-                        className="text-red-500 text-sm"
+                      />
+
+                      <input
+                        placeholder="Subtitle"
+                        value={a.subtitle || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => {
+                          const updated = [...form.metadata.amenities];
+                          updated[i].subtitle = e.target.value;
+                          handleMetadataChange("amenities", updated);
+                        }}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleMetadataChange(
+                            "amenities",
+                            form.metadata.amenities.filter((_: any, idx: any) => idx !== i)
+                          )
+                        }
+                        className="text-red-500 text-sm col-span-3 text-left"
                       >
                         Remove
                       </button>
@@ -737,78 +868,137 @@ export default function AddVendorPage() {
                     type="button"
                     onClick={() =>
                       handleMetadataChange("amenities", [
-                        ...form.metadata.amenities,
-                        "",
+                        ...(form.metadata.amenities || []),
+                        { name: "", icon: "", subtitle: "" },
                       ])
                     }
-                    className="text-sm text-primary"
+                    className="text-primary text-sm"
                   >
                     + Add Amenity
                   </button>
+
                 </div>
-                {/* ROOMS */}
+                {/* NEARBY ATTRACTIONS */}
                 <div>
-                  <label className="block text-sm mb-2">Room Types</label>
+                  <h3 className="mt-6 mb-2 font-medium">Nearby Attractions</h3>
 
-                  {form.metadata.rooms?.map((room: any, i: number) => (
-                    <div key={i} className="grid grid-cols-2 gap-3 mb-3">
-                      <input
-                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                        placeholder="Room Type (e.g. Deluxe, Suite)"
-                        value={room?.type || ""}
+                  {form.metadata.nearby_attractions?.map((a: any, i: any) => (
+                    <div key={i} className="grid grid-cols-4 gap-3 mb-3">
+
+                      <input placeholder="Name" value={a.name || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
                         onChange={(e) => {
-                          const updated = [...form.metadata.rooms];
-
-                          if (!updated[i]) updated[i] = { type: "", price: "" };
-
-                          updated[i].type = e.target.value;
-                          handleMetadataChange("rooms", updated);
+                          const u = [...form.metadata.nearby_attractions];
+                          u[i].name = e.target.value;
+                          handleMetadataChange("nearby_attractions", u);
                         }}
                       />
 
-                      <input
-                        type="number"
-                        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                        placeholder="Price"
-                        value={room?.price || ""}
+                      <input placeholder="Distance (2.5 km)" value={a.distance || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
                         onChange={(e) => {
-                          const updated = [...form.metadata.rooms];
-
-                          if (!updated[i]) updated[i] = { type: "", price: "" };
-
-                          updated[i].price = e.target.value;
-                          handleMetadataChange("rooms", updated);
+                          const u = [...form.metadata.nearby_attractions];
+                          u[i].distance = e.target.value;
+                          handleMetadataChange("nearby_attractions", u);
                         }}
                       />
 
-                      {/* Remove Room */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const updated = form.metadata.rooms.filter(
-                            (_: any, index: number) => index !== i
-                          );
-                          handleMetadataChange("rooms", updated);
+                      <input placeholder="Icon" value={a.icon || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => {
+                          const u = [...form.metadata.nearby_attractions];
+                          u[i].icon = e.target.value;
+                          handleMetadataChange("nearby_attractions", u);
                         }}
-                        className="text-red-500 text-sm col-span-2 text-left"
-                      >
-                        Remove Room
+                      />
+
+                      <input placeholder="Category" value={a.category || ""}
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => {
+                          const u = [...form.metadata.nearby_attractions];
+                          u[i].category = e.target.value;
+                          handleMetadataChange("nearby_attractions", u);
+                        }}
+                      />
+
+                      <button className="text-red-500 text-sm col-span-4 text-left"
+                        onClick={() =>
+                          handleMetadataChange(
+                            "nearby_attractions",
+                            form.metadata.nearby_attractions.filter((_: any, idx: any) => idx !== i)
+                          )
+                        }>
+                        Remove
                       </button>
                     </div>
                   ))}
 
                   <button
                     type="button"
+                    className="text-primary text-sm"
                     onClick={() =>
-                      handleMetadataChange("rooms", [
-                        ...form.metadata.rooms,
-                        { type: "", price: "" },
+                      handleMetadataChange("nearby_attractions", [
+                        ...(form.metadata.nearby_attractions || []),
+                        { name: "", distance: "", icon: "", category: "" },
                       ])
                     }
-                    className="text-sm text-primary"
                   >
-                    + Add Room
+                    + Add Nearby Attraction
                   </button>
+
+                </div>
+                {/* ROOMS */}
+                <div>
+                  <h3 className="mt-6 mb-2 font-medium">Room Types</h3>
+
+                  {form.metadata.room_types?.map((room: any, i: any) => (
+                    <div key={i} className="grid grid-cols-2 gap-3 mb-4">
+
+                      <input placeholder="Room Name" value={room.name || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => { const u = [...form.metadata.room_types]; u[i].name = e.target.value; handleMetadataChange("room_types", u) }}
+                      />
+
+                      <input placeholder="Price" value={room.price || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => { const u = [...form.metadata.room_types]; u[i].price = e.target.value; handleMetadataChange("room_types", u) }}
+                      />
+
+                      <input placeholder="Image URL" value={room.image || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => { const u = [...form.metadata.room_types]; u[i].image = e.target.value; handleMetadataChange("room_types", u) }}
+                      />
+
+                      <textarea placeholder="Description" value={room.description || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => { const u = [...form.metadata.room_types]; u[i].description = e.target.value; handleMetadataChange("room_types", u) }}
+                      />
+
+                      <input placeholder="Capacity" value={room.capacity || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={(e) => { const u = [...form.metadata.room_types]; u[i].capacity = e.target.value; handleMetadataChange("room_types", u) }}
+                      />
+
+                      <button
+                        className="text-red-500 text-sm col-span-2 text-left"
+                        onClick={() =>
+                          handleMetadataChange(
+                            "room_types",
+                            form.metadata.room_types.filter((_: any, idx: any) => idx !== i)
+                          )
+                        }>
+                        Remove Room
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    className="text-primary text-sm"
+                    onClick={() =>
+                      handleMetadataChange("room_types", [
+                        ...(form.metadata.room_types || []),
+                        { name: "", price: "", image: "", description: "", capacity: "" },
+                      ])
+                    }
+                  >
+                    + Add Room Type
+                  </button>
+
                 </div>
               </div>
             )}
@@ -1115,41 +1305,41 @@ export default function AddVendorPage() {
                 onChange={handleChange}
               />
             </div>
-             <div className="col-span-full space-y-2 relative">
-      <label className="text-sm font-medium text-muted-foreground">
-        City Name
-      </label>
+            <div className="col-span-full space-y-2 relative">
+              <label className="text-sm font-medium text-muted-foreground">
+                City Name
+              </label>
 
-      <input
-        className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-        placeholder="Select or search city..."
-        value={search || form.city}
-        onFocus={() => setOpen(true)}
-        onClick={() => setOpen(true)}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setOpen(true);
-        }}
-      />
+              <input
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                placeholder="Select or search city..."
+                value={search || form.city}
+                onFocus={() => setOpen(true)}
+                onClick={() => setOpen(true)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setOpen(true);
+                }}
+              />
 
-      {open && (
-        <div className="absolute left-0 right-0 mt-1 bg-black border border-border rounded-lg max-h-60 overflow-auto shadow-md z-30">
-          {filteredCities.length === 0 ? (
-            <p className="p-3 text-sm text-muted-foreground">No city found</p>
-          ) : (
-            filteredCities.map((city) => (
-              <div
-                key={city}
-                onClick={() => handleSelect(city)}
-                className="px-4 py-2 cursor-pointer hover:bg-primary/10"
-              >
-                {city}
-              </div>
-            ))
-          )}
-        </div>
-      )}
-    </div>
+              {open && (
+                <div className="absolute left-0 right-0 mt-1 bg-black border border-border rounded-lg max-h-60 overflow-auto shadow-md z-30">
+                  {filteredCities.length === 0 ? (
+                    <p className="p-3 text-sm text-muted-foreground">No city found</p>
+                  ) : (
+                    filteredCities.map((city) => (
+                      <div
+                        key={city}
+                        onClick={() => handleSelect(city)}
+                        className="px-4 py-2 cursor-pointer hover:bg-primary/10"
+                      >
+                        {city}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">

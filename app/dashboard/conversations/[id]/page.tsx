@@ -55,11 +55,12 @@ export default function ChatPage() {
     try {
       const res = await fetch(`http://44.206.101.8/api/v1/admin/conversations/${conversationId}/messages`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" ,
+        headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          content:input,
+          content: input,
         }),
       });
 
@@ -74,6 +75,18 @@ export default function ChatPage() {
       );
     }
   };
+
+  const confirmBooking = async () => {
+    let token = localStorage.getItem("access_token");
+    try{
+      const res = await fetch(``)
+    }catch(err){
+      console.error("Failed to confirm booking", err);
+    }
+  }
+
+
+
 
   return (
     <div className="flex h-[calc(100vh-80px)] flex-col rounded-2xl border border-[#2A2A2A] bg-[#161616]">
@@ -90,10 +103,10 @@ export default function ChatPage() {
           Conversation #{conversationId}
         </h2>
         <button
-    className="ml-auto rounded-lg bg-[#FF9F7A] px-4 py-2 text-black font-medium hover:opacity-90"
-  >
-    Confirm Booking
-  </button>
+          className="ml-auto rounded-lg bg-[#FF9F7A] px-4 py-2 text-black font-medium hover:opacity-90"
+        >
+          Confirm Booking
+        </button>
       </div>
 
       {/* Messages */}
