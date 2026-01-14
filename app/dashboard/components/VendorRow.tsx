@@ -22,61 +22,61 @@ export default function VendorRow({ vendor, index = 0, onDelete }: VendorRowProp
 
 
   const deleteVendor = async (vendorId: number) => {
-  const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
-  try {
-    const response = await fetch(
-      `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=true`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      const response = await fetch(
+        `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=false`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`Delete failed: ${response.status}`);
+      console.log("Vendor deleted successfully");
+
+      // Tell parent to remove vendor from UI
+      onDelete?.(vendorId);
+
+    } catch (error) {
+      console.error("Error deleting vendor:", error);
+      alert("Failed to delete vendor");
     }
+  };
 
-    console.log("Vendor deleted successfully");
+  const hideVendor = async (vendorId: number) => {
+    const token = localStorage.getItem("access_token");
 
-    // Tell parent to remove vendor from UI
-    onDelete?.(vendorId);
+    try {
+      const response = await fetch(
+        `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=false`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  } catch (error) {
-    console.error("Error deleting vendor:", error);
-    alert("Failed to delete vendor");
-  }
-};
-
-const hideVendor = async (vendorId: number) => {
-  const token = localStorage.getItem("access_token");
-
-  try {
-    const response = await fetch(
-      `http://44.206.101.8/api/v1/admin/services/vendors/${vendorId}?hard_delete=false`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`Delete failed: ${response.status}`);
+      console.log("Vendor deleted successfully");
+
+
+
+    } catch (error) {
+      console.error("Error deleting vendor:", error);
+      alert("Failed to delete vendor");
     }
-
-    console.log("Vendor deleted successfully");
-
-    
-
-  } catch (error) {
-    console.error("Error deleting vendor:", error);
-    alert("Failed to delete vendor");
-  }
-};
+  };
 
 
 
@@ -85,9 +85,9 @@ const hideVendor = async (vendorId: number) => {
 
   // console.log("Rendering VendorRow for:", vendor);
   return (
-    <tr 
+    <tr
       className="hover:bg-surface-hover/50 transition-colors duration-200 group"
-      style={{ 
+      style={{
         animation: 'fadeIn 0.4s ease-out forwards',
         animationDelay: `${index * 0.05}s`,
         opacity: 0
@@ -149,29 +149,29 @@ const hideVendor = async (vendorId: number) => {
       {/* Actions */}
       <td className="px-6 py-4">
         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button 
-          onClick={()=>hideVendor(vendor.id)}
+          <Link
+            href={`/dashboard/vendorinfo/${vendor?.id}`}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
             title="View"
           >
             <Eye className="w-4 h-4" />
-          </button>
+          </Link>
 
-          <Link 
+          <Link
             href={`vendors/addvendor/${vendor.id}`}
             className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition-all duration-200 cursor-pointer"
             title="Edit"
-            // onClick={() => {
-            //   console.log("vendor selected vendor",vendor)
-            // }}
+          // onClick={() => {
+          //   console.log("vendor selected vendor",vendor)
+          // }}
           >
             <Pencil className="w-4 h-4" />
           </Link>
 
-          <button 
+          <button
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 transition-all duration-200 cursor-pointer"
             title="Delete"
-            onClick={()=>deleteVendor(vendor.id)}
+            onClick={() => deleteVendor(vendor.id)}
           >
             <Trash2 className="w-4 h-4" />
           </button>

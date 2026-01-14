@@ -410,6 +410,7 @@ export default function AddVendorPage() {
                 placeholder="Brief summary for list view"
                 value={form.description}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -421,6 +422,7 @@ export default function AddVendorPage() {
                 placeholder="Detailed information about the vendor..."
                 value={form.fullDescription}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -1005,55 +1007,299 @@ export default function AddVendorPage() {
           </div>
         )}
         {form.category_slug === "jets" && (
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Private Jets Details</h3>
+  <div>
+    <h3 className="text-lg font-semibold mb-4">Private Jets Details</h3>
 
-            <label className="block text-sm mb-2">Aircrafts</label>
+    {/* HOURS */}
+    <div className="mb-6">
+      <h4 className="font-semibold mb-2">Operating Hours</h4>
 
-            {form.metadata.aircraft?.map((item: string, i: number) => (
-              <div key={i} className="flex gap-2 mb-2">
-                <input
-                  className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground
-        placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                  placeholder="Aircraft Name (e.g. Gulfstream G650)"
-                  value={item || ""}
-                  onChange={(e) => {
-                    const updated = [...form.metadata.aircraft];
-                    updated[i] = e.target.value;
-                    handleMetadataChange("aircraft", updated);
-                  }}
-                />
+      {form.metadata.hours?.map((item: any, i: number) => (
+        <div key={i} className="grid grid-cols-2 gap-3 mb-2">
+          <input
+            className="bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Label (e.g. Open Hours)"
+            value={item.name || ""}
+            onChange={(e) => {
+              const updated = [...form.metadata.hours];
+              updated[i] = { ...updated[i], name: e.target.value };
+              handleMetadataChange("hours", updated);
+            }}
+          />
 
-                {/* Remove */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const updated = form.metadata.aircraft.filter(
-                      (_: string, index: number) => index !== i
-                    );
-                    handleMetadataChange("aircraft", updated);
-                  }}
-                  className="text-red-500 text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+          <input
+            className="bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Time (e.g. 24/7 Concierge Support)"
+            value={item.time || ""}
+            onChange={(e) => {
+              const updated = [...form.metadata.hours];
+              updated[i] = { ...updated[i], time: e.target.value };
+              handleMetadataChange("hours", updated);
+            }}
+          />
 
-            <button
-              type="button"
-              onClick={() =>
-                handleMetadataChange("aircraft", [
-                  ...form.metadata.aircraft,
-                  "",
-                ])
-              }
-              className="text-sm text-primary"
-            >
-              + Add Aircraft
-            </button>
-          </div>
-        )}
+          <button
+            type="button"
+            onClick={() => {
+              const updated = form.metadata.hours.filter(
+                (_: any, index: number) => index !== i
+              );
+              handleMetadataChange("hours", updated);
+            }}
+            className="text-red-500 text-sm col-span-2 text-left"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={() =>
+          handleMetadataChange("hours", [
+            ...form.metadata.hours,
+            { name: "", time: "" },
+          ])
+        }
+        className="text-sm text-primary"
+      >
+        + Add Hour
+      </button>
+    </div>
+
+    {/* LANGUAGES */}
+    <div className="mb-6">
+      <h4 className="font-semibold mb-2">Languages</h4>
+
+      {form.metadata.languages?.map((lang: string, i: number) => (
+        <div key={i} className="flex gap-2 mb-2">
+          <input
+            className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Language"
+            value={lang}
+            onChange={(e) => {
+              const updated = [...form.metadata.languages];
+              updated[i] = e.target.value;
+              handleMetadataChange("languages", updated);
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              const updated = form.metadata.languages.filter(
+                (_: string, index: number) => index !== i
+              );
+              handleMetadataChange("languages", updated);
+            }}
+            className="text-red-500 text-sm"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={() =>
+          handleMetadataChange("languages", [
+            ...form.metadata.languages,
+            "",
+          ])
+        }
+        className="text-sm text-primary"
+      >
+        + Add Language
+      </button>
+    </div>
+
+    {/* SERVICE AREA */}
+    <div className="mb-6">
+      <h4 className="font-semibold mb-2">Service Area</h4>
+
+      {form.metadata.service_area?.map((area: string, i: number) => (
+        <div key={i} className="flex gap-2 mb-2">
+          <input
+            className="w-full bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Service Area"
+            value={area}
+            onChange={(e) => {
+              const updated = [...form.metadata.service_area];
+              updated[i] = e.target.value;
+              handleMetadataChange("service_area", updated);
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              const updated = form.metadata.service_area.filter(
+                (_: string, index: number) => index !== i
+              );
+              handleMetadataChange("service_area", updated);
+            }}
+            className="text-red-500 text-sm"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={() =>
+          handleMetadataChange("service_area", [
+            ...form.metadata.service_area,
+            "",
+          ])
+        }
+        className="text-sm text-primary"
+      >
+        + Add Service Area
+      </button>
+    </div>
+
+    {/* JET TYPES */}
+    <div className="mb-6">
+      <h4 className="font-semibold mb-2">Jet Types</h4>
+
+      {form.metadata.jet_types?.map((jet: any, i: number) => (
+        <div key={i} className="border p-3 rounded-lg mb-3">
+          <input
+            className="w-full mb-2 bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Jet Name"
+            value={jet.name}
+            onChange={(e) => {
+              const updated = [...form.metadata.jet_types];
+              updated[i] = { ...updated[i], name: e.target.value };
+              handleMetadataChange("jet_types", updated);
+            }}
+          />
+
+          <input
+            className="w-full mb-2 bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Image URL"
+            value={jet.image}
+            onChange={(e) => {
+              const updated = [...form.metadata.jet_types];
+              updated[i] = { ...updated[i], image: e.target.value };
+              handleMetadataChange("jet_types", updated);
+            }}
+          />
+
+          <input
+            className="w-full mb-2 bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Capacity"
+            value={jet.capacity}
+            onChange={(e) => {
+              const updated = [...form.metadata.jet_types];
+              updated[i] = { ...updated[i], capacity: e.target.value };
+              handleMetadataChange("jet_types", updated);
+            }}
+          />
+
+          <input
+            className="w-full mb-2 bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Range"
+            value={jet.range}
+            onChange={(e) => {
+              const updated = [...form.metadata.jet_types];
+              updated[i] = { ...updated[i], range: e.target.value };
+              handleMetadataChange("jet_types", updated);
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              const updated = form.metadata.jet_types.filter(
+                (_: any, index: number) => index !== i
+              );
+              handleMetadataChange("jet_types", updated);
+            }}
+            className="text-red-500 text-sm"
+          >
+            Remove Jet
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={() =>
+          handleMetadataChange("jet_types", [
+            ...form.metadata.jet_types,
+            { name: "", image: "", capacity: "", range: "" },
+          ])
+        }
+        className="text-sm text-primary"
+      >
+        + Add Jet Type
+      </button>
+    </div>
+
+    {/* POPULAR ROUTES */}
+    <div>
+      <h4 className="font-semibold mb-2">Popular Routes</h4>
+
+      {form.metadata.popular_routes?.map((route: any, i: number) => (
+        <div key={i} className="grid grid-cols-2 gap-3 mb-2">
+          <input
+            className="bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Origin"
+            value={route.origin}
+            onChange={(e) => {
+              const updated = [...form.metadata.popular_routes];
+              updated[i] = { ...updated[i], origin: e.target.value };
+              handleMetadataChange("popular_routes", updated);
+            }}
+          />
+
+          <input
+            className="bg-secondary border border-border rounded-lg px-4 py-3"
+            placeholder="Destination"
+            value={route.destination}
+            onChange={(e) => {
+              const updated = [...form.metadata.popular_routes];
+              updated[i] = {
+                ...updated[i],
+                destination: e.target.value,
+              };
+              handleMetadataChange("popular_routes", updated);
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              const updated = form.metadata.popular_routes.filter(
+                (_: any, index: number) => index !== i
+              );
+              handleMetadataChange("popular_routes", updated);
+            }}
+            className="text-red-500 text-sm col-span-2 text-left"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={() =>
+          handleMetadataChange("popular_routes", [
+            ...form.metadata.popular_routes,
+            { origin: "", destination: "" },
+          ])
+        }
+        className="text-sm text-primary"
+      >
+        + Add Route
+      </button>
+    </div>
+  </div>
+)}
+
         {form.category_slug === "flights" && (
           <div>
             <h3 className="text-lg font-semibold mb-3">Flights Details</h3>

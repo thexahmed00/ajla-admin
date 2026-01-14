@@ -1,16 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  LayoutGrid,
-  List,
-  Grid3X3,
-  Plus
-} from "lucide-react";
+import { LayoutGrid, List, Grid3X3, Plus } from "lucide-react";
 import CategoryCard from "../components/CategoryCard";
 import AddCategoryModal from "../components/AddCategoryModal";
 
-const PLACEHOLDER =
-  "https://via.placeholder.com/150?text=No+Icon";
+const PLACEHOLDER = "https://via.placeholder.com/150?text=No+Icon";
 
 const Categories = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -18,25 +12,23 @@ const Categories = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // ---------- NEW STATE FOR EDIT ----------
+  const [editingCategory, setEditingCategory] = useState<any | null>(null);
+
   const fetchCategories = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("access_token");
 
       const res = await fetch("/api/categories", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await res.json();
       console.log("Fetched Categories:", data);
 
-      if (res.ok) {
-        setCategories(data.categories || []);
-      } else {
-        console.log("Failed to load categories");
-      }
+      if (res.ok) setCategories(data.categories || []);
+      else console.log("Failed to load categories");
     } catch (err) {
       console.error("Fetch error", err);
     } finally {
@@ -47,6 +39,42 @@ const Categories = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // ---------- EDIT HANDLER ----------
+  const handleEdit = (slug: string) => {
+    const cat = categories.find((c) => c.slug === slug);
+    if (!cat) return;
+
+    setEditingCategory(cat);
+    setOpen(true); // open same modal but in edit mode
+  };
+
+  // ---------- DELETE HANDLER ----------
+  const handleDelete = async (slug: string) => {
+    const cat = categories.find((c) => c.slug === slug);
+    if (!cat) return;
+
+    if (!confirm("Are you sure you want to delete this category?")) return;
+
+    try {
+      const token = localStorage.getItem("access_token");
+
+      const res = await fetch(`/api/categories/${cat.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Delete failed");
+
+      setCategories((prev) => prev.filter((c) => c.id !== cat.id));
+      console.log("Category deleted");
+    } catch (error) {
+      console.error("Delete error", error);
+      alert("Failed to delete category");
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -69,7 +97,10 @@ const Categories = () => {
           <button
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl 
               bg-gradient-to-r from-primary to-primary-hover text-white font-semibold mr-2"
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setEditingCategory(null); // ensure fresh form when adding
+              setOpen(true);
+            }}
           >
             <Plus className="w-5 h-5" />
             Add Category
@@ -126,17 +157,21 @@ const Categories = () => {
               vendorCount={0}
               description=""
               gradient=""
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </div>
       )}
 
-      {/* Modal */}
+      {/* Modal (Add + Edit shared) */}
       <AddCategoryModal
         open={open}
         onClose={() => setOpen(false)}
+        editingData={editingCategory}     // <-- pass data for autofill
         onSubmit={async () => {
-          await fetchCategories(); // refresh after add
+          await fetchCategories();        // refresh after add / edit
+          setEditingCategory(null);
         }}
       />
     </div>

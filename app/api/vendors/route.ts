@@ -8,11 +8,17 @@ export async function GET(req: Request) {
   }
 
   const { searchParams } = new URL(req.url);
-  const category_slug = searchParams.get("category_slug") || " ";
+  const category_slug = searchParams.get("category_slug");
   const skip = searchParams.get("skip") || "0";
   const limit = searchParams.get("limit") || "20";
 
-  const apiUrl = `http://44.206.101.8/api/v1/admin/services/vendors?category_slug=${category_slug}&skip=${skip}&limit=${limit}`;
+  // Base URL
+  let apiUrl = `http://44.206.101.8/api/v1/admin/services/vendors?skip=${skip}&limit=${limit}`;
+
+  // Append slug only if provided and not empty
+  if (category_slug && category_slug.trim() !== "") {
+    apiUrl += `&category_slug=${category_slug}`;
+  }
 
   const res = await fetch(apiUrl, {
     headers: {

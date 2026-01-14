@@ -48,7 +48,25 @@ export const metaDefaults : Record<string, any> = {
   },
 
   jets: {
-    aircraft: [""],
+    hours:[
+      {name:"",time:""}
+    ],
+    languages:[''],
+    service_area:[''],
+    jet_types:[
+      {
+        name:"",
+        image:"",
+        capacity:"",
+        range:"",
+      }
+    ],
+    popular_routes: [
+      {
+        origin: "",
+        destination: "",
+      }
+    ],
   },
 
   flights: {

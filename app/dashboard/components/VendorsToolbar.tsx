@@ -34,6 +34,7 @@ export default function VendorsToolbar({ onCategoryChange }: Props) {
           <option value="car_renting">Car Renting</option>
           <option value="flights">Flights</option>
           <option value="car_driver">Car & Driver</option>
+          <option value="spa">Spa & Wellness</option>
         </select>
 
         <SlidersHorizontal className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim pointer-events-none" />

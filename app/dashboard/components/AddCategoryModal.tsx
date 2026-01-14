@@ -5,12 +5,14 @@ interface AddCategoryModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
+  editingData: (data: any) => void;
 }
 
 export default function AddCategoryModal({
   open,
   onClose,
-  onSubmit
+  onSubmit,
+  editingData
 }: AddCategoryModalProps) {
   const [form, setForm] = useState({
     slug: "",
