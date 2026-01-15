@@ -43,7 +43,7 @@ export default function DashboardPage() {
       let token = localStorage.getItem("access_token")
       try {
         const data = await fetchDashboardStats();
-        const res = await fetch("http://44.206.101.8/api/v1/admin/conversations?skip=0&limit=20",{
+        const res = await fetch("/api/conversations?skip=0&limit=20",{
           headers: {
             Authorization: `Bearer ${token}`,
           },

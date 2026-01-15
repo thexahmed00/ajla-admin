@@ -42,7 +42,7 @@ const [confirmLoading, setConfirmLoading] = useState(false);
     setInput("");
 
     try {
-      const res = await fetch(`http://44.206.101.8/api/v1/admin/conversations/${conversationId}/messages`, {
+      const res = await fetch(`/api/conversations/${conversationId}/messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const [confirmLoading, setConfirmLoading] = useState(false);
   setConfirmLoading(true);
   try {
     const res = await fetch(
-      `http://44.206.101.8/api/v1/admin/conversations/${conversationId}/confirm`,
+      `/api/conversations/${conversationId}/confirm`,
       {
         method: "POST",
         headers: {
