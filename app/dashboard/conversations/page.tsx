@@ -1,10 +1,8 @@
 "use client";
 import Link from "next/link";
-import StatCard from "./components/StatCard";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isAdmin } from "../lib/auth";
-import { fetchDashboardStats } from "../lib/api";
+import { isAdmin } from "../../lib/auth";
 import { MessageSquare, Users, Grid3X3, Clock, ChevronRight } from "lucide-react";
 
 type ConversationApi = {
@@ -42,7 +40,7 @@ export default function DashboardPage() {
     async function loadStats() {
       let token = localStorage.getItem("access_token")
       try {
-        const data = await fetchDashboardStats();
+        // const data = await fetchDashboardStats();
         const res = await fetch("http://44.206.101.8/api/v1/admin/conversations?skip=0&limit=20",{
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,7 +60,7 @@ export default function DashboardPage() {
           })
         );
 
-        setStats(data);
+        // setStats(data);
         setConversationsData(conversations);
       } catch (error) {
         console.error(error);
@@ -97,20 +95,12 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-text-main mb-2">
-          Dashboard
+          Conversations
         </h1>
-        <p className="text-sm md:text-base text-text-muted">
-          Welcome to AJLA Admin Panel
-        </p>
+        
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <StatCard title="Total Conversations" value={convoCount ?? "0"} icon={MessageSquare} />
-        <StatCard title="Active Vendors" value={stats?.activeVendors ?? "0"} icon={Users} />
-        <StatCard title="Service Categories" value={stats?.serviceCategories ?? "0"} icon={Grid3X3} />
-        <StatCard title="Availability" value={stats?.availability ?? "0%"} icon={Clock} />
-      </div>
+
 
       {/* Conversations */}
       <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
@@ -134,7 +124,7 @@ export default function DashboardPage() {
           {conversationsData.map((conv) => (
             <Link
               key={conv.id}
-              href={`/dashboard/conversations`}
+              href={`/dashboard/conversation/${conv.id}`}
               className="block px-5 md:px-6 py-4 hover:bg-surface-hover/50 transition-all duration-200 group"
             >
               <div className="flex items-start justify-between gap-4">

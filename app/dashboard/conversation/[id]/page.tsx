@@ -11,23 +11,12 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [bookingNotes, setBookingNotes] = useState<string>("");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+const [confirmLoading, setConfirmLoading] = useState(false);
+
   const conversationId = id; // <-- Use dynamic id from URL
-  // Fetch chat messages
-  // useEffect(() => {
-  //   const fetchMessages = async () => {
-  //     try {
-  //       const res = await fetch(`/api/chat/messages?conversationId=${conversationId}`);
-  //       const data = await res.json();
-  //       setMessages(data.messages || []);
-  //     } catch (error) {
-  //       console.error("Failed to load messages", error);
-  //     }
-  //   };
 
-  //   fetchMessages();
-  // }, [conversationId]);
-
-  // Auto scroll to bottom
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -77,13 +66,39 @@ export default function ChatPage() {
   };
 
   const confirmBooking = async () => {
-    let token = localStorage.getItem("access_token");
-    try{
-      const res = await fetch(``)
-    }catch(err){
-      console.error("Failed to confirm booking", err);
-    }
+  if (!bookingNotes.trim()) return;
+
+  let token = localStorage.getItem("access_token");
+  setConfirmLoading(true);
+  try {
+    const res = await fetch(
+      `http://44.206.101.8/api/v1/admin/conversations/${conversationId}/confirm`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            end_at: new Date().toISOString(),
+          notes: bookingNotes,
+          start_at: new Date().toISOString(),
+
+        }),
+      }
+    );
+
+    if (!res.ok) throw new Error("Failed to confirm booking");
+    console.log("Booking confirmed successfully", res);
+    setIsConfirmOpen(false);
+    setBookingNotes("");
+  } catch (err) {
+    console.error("Failed to confirm booking", err);
+  } finally {
+    setConfirmLoading(false);
   }
+};
+
 
 
 
@@ -103,7 +118,8 @@ export default function ChatPage() {
           Conversation #{conversationId}
         </h2>
         <button
-          className="ml-auto rounded-lg bg-[#FF9F7A] px-4 py-2 text-black font-medium hover:opacity-90"
+        onClick={() => setIsConfirmOpen(true)}
+          className="ml-auto rounded-lg bg-[#FF9F7A] px-4 py-2 text-black font-medium hover:opacity-90 cursor-pointer"
         >
           Confirm Booking
         </button>
@@ -135,6 +151,41 @@ export default function ChatPage() {
           </button>
         </div>
       </div>
+      {isConfirmOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="w-full max-w-md rounded-2xl bg-[#161616] border border-[#2A2A2A] p-6">
+      <h3 className="mb-4 text-lg font-medium">
+        Confirm Booking
+      </h3>
+
+      <textarea
+        value={bookingNotes}
+        onChange={(e) => setBookingNotes(e.target.value)}
+        placeholder="Enter booking notes..."
+        className="w-full rounded-xl bg-[#1F1F1F] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-500"
+        rows={4}
+      />
+
+      <div className="mt-6 flex justify-end gap-3">
+        <button
+          onClick={() => setIsConfirmOpen(false)}
+          className="rounded-lg bg-[#2A2A2A] px-4 py-2 text-sm"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={confirmBooking}
+          disabled={confirmLoading}
+          className="rounded-lg bg-[#FF9F7A] px-4 py-2 text-sm text-black hover:opacity-90 disabled:opacity-60 cursor-pointer"
+        >
+          {confirmLoading ? "Confirming..." : "Confirm"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
