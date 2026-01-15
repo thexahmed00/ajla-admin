@@ -124,7 +124,7 @@ export default function DashboardPage() {
             </h2>
           </div>
 
-          <Link href="/dashboard/conversations/1" className="flex items-center gap-1 text-sm text-primary hover:text-primary-hover transition-colors group">
+          <Link href="/dashboard/conversations" className="flex items-center gap-1 text-sm text-primary hover:text-primary-hover transition-colors group">
             <span>View All</span>
             <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
