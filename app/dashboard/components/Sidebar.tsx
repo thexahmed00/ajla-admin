@@ -4,7 +4,8 @@ import { logout } from "@/app/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut, Book } from "lucide-react";
-
+import Image from "next/image";
+import Logo from "../../../public/images/logo.jpeg"
 const menu = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Conversations", href: "/dashboard/conversations", icon: MessageSquare },
@@ -26,10 +27,21 @@ export default function Sidebar() {
     <aside className="w-64 bg-surface/50 backdrop-blur-sm border-r border-border p-6 flex flex-col h-screen sticky top-0">
       {/* Logo */}
       <div className="mb-10">
-        <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
-          AJLA 
-          <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span>
-        </h1>
+        {/* <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
+  <Image
+    src={Logo}   // public/ajla-logo.jpeg
+    alt="AJLA"
+    width={120}
+    height={32}
+    className="object-contain"
+    priority
+  />
+
+  <span className="text-primary text-xs font-semibold tracking-wider">
+    ADMIN
+  </span>
+</h1> */}
+        <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1"> AJLA <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span> </h1>
         <div className="mt-2 h-0.5 w-12 bg-gradient-to-r from-primary to-transparent rounded-full" />
       </div>
 
@@ -52,10 +64,10 @@ export default function Sidebar() {
               >
                 {/* Active indicator */}
                 <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full bg-primary transition-all duration-300 ${active ? 'h-6 opacity-100' : 'h-0 opacity-0'}`} />
-                
+
                 {/* Icon */}
                 <Icon className={`w-5 h-5 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
-                
+
                 {/* Label */}
                 <span className={`font-medium text-sm ${active ? 'font-semibold' : ''}`}>
                   {item.name}

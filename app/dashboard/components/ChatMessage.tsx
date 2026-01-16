@@ -8,15 +8,15 @@ export default function ChatMessage({ message }: { message: Message }) {
       className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm leading-relaxed
+        className={`max-w-xs rounded-2xl px-4 py-3 text-sm
           ${
             isAdmin
-              ? "bg-[#FF9F7A] text-black rounded-br-sm"
-              : "bg-[#1F1F1F] text-white rounded-bl-sm"
+              ? "bg-[#FF9F7A] text-black rounded-br-none"
+              : "bg-[#1F1F1F] text-white rounded-bl-none"
           }`}
       >
         <p>{message.text}</p>
-        <span className="mt-2 block text-xs opacity-70">
+        <span className="mt-1 block text-[10px] opacity-70 text-right">
           {message.time}
         </span>
       </div>

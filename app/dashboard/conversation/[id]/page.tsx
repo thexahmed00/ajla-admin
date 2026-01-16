@@ -99,6 +99,50 @@ const [confirmLoading, setConfirmLoading] = useState(false);
   }
 };
 
+const fetchConversation = async () => {
+  const token = localStorage.getItem("access_token");
+
+  const res = await fetch("/api/conversation", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      conversation_id: conversationId,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch conversation");
+  }
+
+  return res.json();
+};
+
+
+useEffect(() => {
+  if (!conversationId) return;
+
+  fetchConversation()
+    .then((data) => {
+      const formattedMessages = data.messages.map((msg: any) => ({
+        id: msg.id.toString(),
+        sender: msg.sender_type === "admin" ? "admin" : "user",
+        text: msg.content,
+        time: new Date(msg.created_at).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      }));
+
+      setMessages(formattedMessages);
+    })
+    .catch(console.error);
+}, [conversationId]);
+
+
+
 
 
 
@@ -108,7 +152,7 @@ const [confirmLoading, setConfirmLoading] = useState(false);
       {/* Header */}
       <div className="flex items-center gap-4 border-b border-[#2A2A2A] px-6 py-4">
         <Link
-          href="/dashboard"
+          href="/dashboard/conversations"
           className="rounded-lg bg-[#1F1F1F] p-2 hover:bg-[#2A2A2A]"
         >
           ←
