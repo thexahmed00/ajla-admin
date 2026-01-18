@@ -4,14 +4,15 @@ import { logout } from "@/app/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut,Book } from "lucide-react";
+import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut,Book,CheckSquare } from "lucide-react";
 
 const menu = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Conversations", href: "/dashboard/conversations/1", icon: MessageSquare },
+  { name: "Conversations", href: "/dashboard/conversations", icon: MessageSquare },
   { name: "Vendors", href: "/dashboard/vendors", icon: Store },
   { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
   { name: "Bookings", href: "/dashboard/bookings", icon: Book },
+  // { name: "Plans", href: "/dashboard/plans", icon: CheckSquare },
 ];
 
 export default function MobileSidebar() {

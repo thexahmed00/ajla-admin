@@ -3,7 +3,7 @@
 import { logout } from "@/app/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut, Book } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut, Book, CheckSquare } from "lucide-react";
 import Image from "next/image";
 import Logo from "../../../public/images/logo.jpeg"
 const menu = [
@@ -12,6 +12,7 @@ const menu = [
   { name: "Vendors", href: "/dashboard/vendors", icon: Store },
   { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
   { name: "Bookings", href: "/dashboard/bookings", icon: Book },
+  // { name: "Plans", href: "/dashboard/plans", icon: CheckSquare },
 ];
 
 export default function Sidebar() {

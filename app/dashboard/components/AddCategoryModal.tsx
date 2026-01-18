@@ -5,7 +5,7 @@ interface AddCategoryModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
-  editingData: (data: any) => void;
+  editingData: any | null;
 }
 
 export default function AddCategoryModal({
@@ -20,64 +20,101 @@ export default function AddCategoryModal({
     display_order: 0,
     icon_url: ""
   });
-
+  // console.log("editing data",editingData.id)
   const [previewError, setPreviewError] = useState(false);
 
-  // Reset form when modal opens
   useEffect(() => {
-    if (open) {
+    if (!open) return;
+
+    if (editingData) {
+      // EDIT MODE → Prefill
+      setForm({
+        slug: editingData.slug || "",
+        name: editingData.name || "",
+        display_order: editingData.display_order || 0,
+        icon_url: editingData.icon_url || "",
+      });
+    } else {
+      // ADD MODE → Empty
       setForm({
         slug: "",
         name: "",
         display_order: 0,
-        icon_url: ""
+        icon_url: "",
       });
-      setPreviewError(false);
     }
-  }, [open]);
+
+    setPreviewError(false);
+  }, [open, editingData]);
+
 
   const handleChange = (key: string, value: any) => {
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
- const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoading(true);
 
   try {
     const token = localStorage.getItem("access_token");
-    console.log("token",token)
 
-    const res = await fetch("/api/categories", {
-      method: "POST",
+    if (!token) {
+      alert("Unauthorized");
+      return;
+    }
+
+    const isEdit = Boolean(editingData?.id);
+
+    const url = isEdit
+      ? "/api/editcategory"
+      : "/api/categories";
+
+    const method = isEdit ? "PUT" : "POST";
+
+    const payload = isEdit
+      ? {
+          id: editingData.id,
+          name: form.name.trim(),
+          icon_url: form.icon_url.trim(),
+        }
+      : {
+          name: form.name.trim(),
+          icon_url: form.icon_url.trim(),
+        };
+
+    const res = await fetch(url, {
+      method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,   // 👈 SEND TOKEN
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        name: form.name.trim(),
-        icon_url: form.icon_url.trim()
-      }),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data?.message || "Failed to create category");
+      alert(data?.message || "Request failed");
       return;
     }
 
-    alert("Category Created Successfully");
-    onClose();
+    alert(isEdit ? "Category Updated Successfully" : "Category Created Successfully");
+
+    // onSubmit();   // refresh list
+    onClose();    // close modal
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
     alert("Something went wrong!");
   } finally {
     setLoading(false);
   }
 };
+
 
 
 
@@ -94,7 +131,10 @@ const handleSubmit = async (e: React.FormEvent) => {
       {/* Modal */}
       <div className="relative bg-black/100 border border-border rounded-2xl shadow-xl w-[95%] max-w-xl p-6 animate-in fade-in zoom-in duration-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Add New Category</h2>
+          <h2 className="text-lg font-semibold">
+            {editingData ? "Update Category" : "Add New Category"}
+          </h2>
+
 
           <button
             onClick={onClose}
@@ -187,7 +227,10 @@ const handleSubmit = async (e: React.FormEvent) => {
               type="submit"
               className="px-5 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition"
             >
-              {loading ? "Adding..." : "Add Category"}
+              {loading
+                ? editingData ? "Updating..." : "Adding..."
+                : editingData ? "Update Category" : "Add Category"}
+
             </button>
           </div>
         </form>

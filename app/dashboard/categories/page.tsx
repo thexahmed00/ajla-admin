@@ -107,11 +107,10 @@ const Categories = () => {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-              viewMode === "grid"
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "grid"
                 ? "bg-primary/10 text-primary"
                 : "text-gray-500"
-            }`}
+              }`}
             onClick={() => setViewMode("grid")}
           >
             <LayoutGrid className="h-4 w-4" />
@@ -119,11 +118,10 @@ const Categories = () => {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-              viewMode === "list"
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "list"
                 ? "bg-primary/10 text-primary"
                 : "text-gray-500"
-            }`}
+              }`}
             onClick={() => setViewMode("list")}
           >
             <List className="h-4 w-4" />
@@ -142,11 +140,10 @@ const Categories = () => {
       {/* Categories Grid */}
       {!loading && (
         <div
-          className={`grid gap-4 md:gap-6 ${
-            viewMode === "grid"
+          className={`grid gap-4 md:gap-6 ${viewMode === "grid"
               ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
               : "grid-cols-1"
-          }`}
+            }`}
         >
           {categories.map((cat) => (
             <CategoryCard
@@ -168,12 +165,13 @@ const Categories = () => {
       <AddCategoryModal
         open={open}
         onClose={() => setOpen(false)}
-        editingData={editingCategory}     // <-- pass data for autofill
+        editingData={editingCategory}
         onSubmit={async () => {
-          await fetchCategories();        // refresh after add / edit
+          await fetchCategories();
           setEditingCategory(null);
         }}
       />
+
     </div>
   );
 };

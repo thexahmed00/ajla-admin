@@ -1,5 +1,14 @@
 import { LucideIcon, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import Boat from "../../../public/icons/Boat.png";
+import CarDriver from "../../../public/icons/Car & Driver.png";
+import Car from "../../../public/icons/Car.png";
+import Flight from "../../../public/icons/Flight.png";
+import Hotel from "../../../public/icons/Hotel.png";
+import PrivateJet from "../../../public/icons/Private Jet.png";
+import Restaurant from "../../../public/icons/Restaurant.png";
+
 
 interface CategoryCardProps {
   icon: string;
@@ -11,6 +20,16 @@ interface CategoryCardProps {
   onEdit?: (slug: string) => void;
   onDelete?: (slug: string) => void;
 }
+const CATEGORY_ICONS: Record<string, any> = {
+  restaurants: Restaurant,
+  hotels: Hotel,
+  jets: PrivateJet,
+  flights: Flight,
+  car_renting: Car,
+  car_driver: CarDriver,
+  boats: Boat,
+};
+
 
 const CategoryCard = ({
   icon,
@@ -22,6 +41,8 @@ const CategoryCard = ({
   onEdit,
   onDelete,
 }: CategoryCardProps) => {
+  const IconImage = CATEGORY_ICONS[slug];
+
   return (
     <Link href={``}>
       <div className="group relative flex flex-col items-center rounded-xl border border-border bg-surface p-6 md:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer overflow-hidden">
@@ -32,7 +53,15 @@ const CategoryCard = ({
           className="relative mb-5 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-2xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
           style={{ background: gradient }}
         >
-          <img src={icon} alt="Icon" className="h-full w-full md:h-10 md:w-10 text-white" />
+          {/* <img src={icon} alt="Icon" className="h-full w-full md:h-10 md:w-10 text-white" /> */}
+          {IconImage && (
+  <Image
+    src={IconImage}
+    alt={title}
+    className="h-8 w-8 md:h-10 md:w-10 object-contain"
+  />
+)}
+
         </div>
 
         <h3 className="relative mb-2 text-lg md:text-xl font-semibold text-text-main group-hover:text-primary transition-colors">
