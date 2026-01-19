@@ -23,52 +23,96 @@ export default function PromoForm({
     link_url: initialData?.image_url || "",
     is_active: initialData?.is_active ?? true,
   });
+  const [uploading, setUploading] = useState(false);
+
 
   const handleChange = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const accessToken = localStorage.getItem("access_token");
+
+      if (!accessToken) {
+        alert("Session expired. Please login again.");
+        return;
+      }
+
+      const res = await fetch("/api/banner", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          access_token: accessToken,
+          title: form.title,
+          description: form.description,
+          image_url: form.image_url,
+          link_url: form.link_url,
+          display_order: Number(form.display_order),
+          is_active: form.is_active,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to create banner");
+      }
+
+      // ✅ Success
+      alert("Banner created successfully");
+      onSubmit?.(data); // optional callback
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message || "Something went wrong");
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
+  setUploading(true);
 
   try {
-    const accessToken = localStorage.getItem("access_token");
+    const authRes = await fetch("/api/imagekit-auth");
+    const auth = await authRes.json();
 
-    if (!accessToken) {
-      alert("Session expired. Please login again.");
-      return;
-    }
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", file.name);
+    formData.append("publicKey", process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!);
+    formData.append("signature", auth.signature);
+    formData.append("expire", auth.expire.toString());
+    formData.append("token", auth.token);
+    formData.append("useUniqueFileName", "true");
+    formData.append("folder", "/promos");
 
-    const res = await fetch("/api/banner", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        access_token: accessToken,
-        title: form.title,
-        description: form.description,
-        image_url: form.image_url,
-        link_url: form.link_url,
-        display_order: Number(form.display_order),
-        is_active: form.is_active,
-      }),
-    });
+    const res = await fetch(
+      "https://upload.imagekit.io/api/v1/files/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data?.message || "Failed to create banner");
+      console.error(data);
+      throw new Error(data.message || "Upload failed");
     }
 
-    // ✅ Success
-    alert("Banner created successfully");
-    onSubmit?.(data); // optional callback
-  } catch (error: any) {
-    console.error(error);
-    alert(error.message || "Something went wrong");
+    handleChange("image_url", data.url);
+  } catch (err: any) {
+    alert(err.message || "Upload failed");
+  } finally {
+    setUploading(false);
   }
 };
+
+
 
 
   return (
@@ -98,7 +142,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       </div>
 
       {/* Image URL */}
-      <div>
+      {/* <div>
         <label className="text-sm text-gray-400">Image URL</label>
         <input
           className="w-full mt-1 px-4 py-2 rounded-lg border bg-secondary"
@@ -106,7 +150,26 @@ const handleSubmit = async (e: React.FormEvent) => {
           value={form.image_url}
           onChange={(e) => handleChange("image_url", e.target.value)}
         />
+      </div> */}
+      <div>
+        <label className="text-sm text-gray-400">Upload Image</label>
+
+        <input
+          type="file"
+          accept="image/*"
+          className="w-full mt-1"
+          onChange={(e) => {
+            if (e.target.files?.[0]) {
+              handleImageUpload(e.target.files[0]);
+            }
+          }}
+        />
+
+        {uploading && (
+          <p className="text-xs text-gray-400 mt-1">Uploading image...</p>
+        )}
       </div>
+
 
       {/* Image Preview */}
       {form.image_url && (

@@ -15,29 +15,30 @@ export default function VendorDetailsUI() {
 const [vendor, setVendor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id) return;
+useEffect(() => {
+  if (!id) return;
 
-    const fetchVendor = async () => {
-      try {
-        const res = await fetch(
-          `http://44.206.101.8/api/v1/services/vendors/${id}`,
-          { cache: "no-store" }        // ensure fresh data
-        );
+  const fetchVendor = async () => {
+    try {
+      const res = await fetch(`/api/vendordetails?id=${id}`, {
+        cache: "no-store",
+      });
 
-        if (!res.ok) throw new Error("Failed to fetch vendor");
+      if (!res.ok) throw new Error("Failed to fetch vendor");
 
-        const data = await res.json();
-        setVendor(data?.data || data);  // adjust if API wraps result
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = await res.json();
+      setVendor(data?.data || data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchVendor();
-  }, [id]);
+  fetchVendor();
+}, [id]);
+
+
 
   if (loading) return <div className="p-10 text-center">Loading vendor…</div>;
   if (!vendor) return <div className="p-10 text-center">Vendor not found</div>;
