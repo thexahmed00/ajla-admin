@@ -6,6 +6,10 @@ import { useEffect, useState } from "react";
 import { isAdmin } from "../lib/auth";
 import { fetchDashboardStats } from "../lib/api";
 import { MessageSquare, Users, Grid3X3, Clock, ChevronRight } from "lucide-react";
+import PromoForm from "./components/HomePageBanner";
+import HomePageBannerModal from "./components/BannerFormModal";
+import { Plus } from "lucide-react";
+
 
 type ConversationApi = {
   id: number;
@@ -34,6 +38,8 @@ export default function DashboardPage() {
   const [conversationsData, setConversationsData] = useState<ConversationUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [convoCount, setConvoCount] = useState<number>(0);
+  const [bannerOpen, setBannerOpen] = useState(false);
+
   useEffect(() => {
     if (!isAdmin()) router.replace("/login");
   }, []);
@@ -103,7 +109,15 @@ export default function DashboardPage() {
           Welcome to AJLA Admin Panel
         </p>
       </div>
-
+      <div className="flex items-center gap-3 mb-4">
+  <button
+    onClick={() => setBannerOpen(true)}
+    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition"
+  >
+    <Plus className="w-4 h-4" />
+    Add Home Banner
+  </button>
+</div>
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <StatCard title="Total Conversations" value={convoCount ?? "0"} icon={MessageSquare} />
@@ -111,6 +125,7 @@ export default function DashboardPage() {
         <StatCard title="Service Categories" value={stats?.serviceCategories ?? "0"} icon={Grid3X3} />
         <StatCard title="Availability" value={stats?.availability ?? "0%"} icon={Clock} />
       </div>
+      
 
       {/* Conversations */}
       <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
@@ -170,6 +185,11 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+      <HomePageBannerModal
+  open={bannerOpen}
+  onClose={() => setBannerOpen(false)}
+/>
+
     </div>
   );
 }
