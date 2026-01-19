@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut, Book, CheckSquare } from "lucide-react";
 import Image from "next/image";
-import Logo from "../../../public/images/logo.jpeg"
+import Logo from "../../../public/icons/logo.svg"
 const menu = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Conversations", href: "/dashboard/conversations", icon: MessageSquare },
@@ -28,21 +28,21 @@ export default function Sidebar() {
     <aside className="w-64 bg-surface/50 backdrop-blur-sm border-r border-border p-6 flex flex-col h-screen sticky top-0">
       {/* Logo */}
       <div className="mb-10">
-        {/* <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
+        <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
   <Image
     src={Logo}   // public/ajla-logo.jpeg
     alt="AJLA"
     width={120}
     height={32}
-    className="object-contain"
+    className="object-contain mt-2"
     priority
   />
 
-  <span className="text-primary text-xs font-semibold tracking-wider">
+  <span className="text-primary text-xs font-semibold">
     ADMIN
   </span>
-</h1> */}
-        <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1"> AJLA <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span> </h1>
+</h1>
+        {/* <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1"> AJLA <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span> </h1> */}
         <div className="mt-2 h-0.5 w-12 bg-gradient-to-r from-primary to-transparent rounded-full" />
       </div>
 

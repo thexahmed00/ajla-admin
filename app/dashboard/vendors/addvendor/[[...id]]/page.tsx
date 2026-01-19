@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, Check, ArrowRight, ArrowLeft } from "lucide-react";
 import { metaDefaults } from "../metaSchema";
 import { useParams } from "next/navigation";
+import { uploadToImageKit } from "@/app/lib/imagekitUpload";
 
 type Dish = {
   category: string;
@@ -37,11 +38,11 @@ export default function AddVendorPage() {
   ];
 
   type ImageItem = {
-  caption: string;
-  image_type: "hero" | "gallery";
-  image_url: string;
-  thumbnail_url?: string;
-};
+    caption: string;
+    image_type: "hero" | "gallery";
+    image_url: string;
+    thumbnail_url?: string;
+  };
   const [form, setForm] = useState<{
     name: string;
     category_slug: string;
@@ -346,6 +347,56 @@ export default function AddVendorPage() {
   };
 
 
+  // image upload logic here
+  const [uploading, setUploading] = useState(false);
+
+
+  const updateHeroImage = (index: number, updates: Partial<ImageItem>) => {
+    setForm((prev) => {
+      const hero_images = [...prev.hero_images];
+      hero_images[index] = { ...hero_images[index], ...updates };
+      return { ...prev, hero_images };
+    });
+  };
+
+  const updateGalleryImage = (index: number, updates: Partial<ImageItem>) => {
+    setForm((prev) => {
+      const gallery_images = [...prev.gallery_images];
+      gallery_images[index] = { ...gallery_images[index], ...updates };
+      return { ...prev, gallery_images };
+    });
+  };
+
+
+  const uploadHeroImage = async (file: File, index: number) => {
+    setUploading(true);
+    const url = await uploadToImageKit(file, {
+      folder: "/vendors/hero",
+    });
+
+    updateHeroImage(index, {
+      image_url: url,
+      thumbnail_url: url,
+    });
+    setUploading(false);
+  };
+
+  const uploadGalleryImage = async (file: File, index: number) => {
+    setUploading(true);
+    const url = await uploadToImageKit(file, {
+      folder: "/vendors/gallery",
+    });
+
+    updateGalleryImage(index, {
+      image_url: url,
+    });
+    setUploading(false);
+  };
+
+
+
+
+
 
 
   return (
@@ -480,17 +531,21 @@ export default function AddVendorPage() {
                   />
 
                   <input
-                    placeholder="Image URL"
+                    // placeholder="Choose Image"
                     className="bg-secondary border border-border rounded-lg px-3 py-2 text-sm"
-                    value={img.image_url}
+                    type="file"
+                    accept="image/*"
                     onChange={(e) => {
-                      const u = [...form.hero_images];
-                      u[i].image_url = e.target.value;
-                      setForm((p) => ({ ...p, hero_images: u }));
+                      if (e.target.files?.[0]) {
+                        uploadHeroImage(e.target.files[0], i);
+                      }
                     }}
                   />
+                  {uploading && (
+                    <p className="text-xs text-muted-foreground">Uploading...</p>
+                  )}
 
-                  <input
+                  {/* <input
                     placeholder="Thumbnail URL"
                     className="bg-secondary border border-border rounded-lg px-3 py-2 text-sm col-span-2"
                     value={img.thumbnail_url || ""}
@@ -499,7 +554,7 @@ export default function AddVendorPage() {
                       u[i].thumbnail_url = e.target.value;
                       setForm((p) => ({ ...p, hero_images: u }));
                     }}
-                  />
+                  /> */}
 
                   <button
                     type="button"
@@ -558,15 +613,19 @@ export default function AddVendorPage() {
                   />
 
                   <input
-                    placeholder="Image URL"
+                    // placeholder="Image URL"
                     className="bg-secondary border border-border rounded-lg px-3 py-2 text-sm"
-                    value={img.image_url}
+                    type="file"
+                    accept="image/*"
                     onChange={(e) => {
-                      const u = [...form.gallery_images];
-                      u[i].image_url = e.target.value;
-                      setForm((p) => ({ ...p, gallery_images: u }));
+                      if (e.target.files?.[0]) {
+                        uploadGalleryImage(e.target.files[0], i);
+                      }
                     }}
                   />
+                  {uploading && (
+                    <p className="text-xs text-muted-foreground">Uploading...</p>
+                  )}
 
                   <button
                     type="button"
