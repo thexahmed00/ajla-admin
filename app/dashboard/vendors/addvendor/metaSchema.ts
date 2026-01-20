@@ -1,5 +1,3 @@
-import { time } from "console";
-import { Star } from "lucide-react";
 
 export const metaDefaults : Record<string, any> = {
   restaurants: {

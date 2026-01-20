@@ -27,6 +27,7 @@ useEffect(() => {
       if (!res.ok) throw new Error("Failed to fetch vendor");
 
       const data = await res.json();
+      console.log("vendor data ",data?.data )
       setVendor(data?.data || data);
     } catch (err) {
       console.error(err);
@@ -55,7 +56,7 @@ useEffect(() => {
       {vendor?.hero_images?.length > 0 && (
         <div className="w-full h-[420px] rounded-3xl overflow-hidden shadow-lg border bg-secondary">
           <img
-            src={vendor.hero_images[0]}
+            src={vendor.hero_images[0]?.url}
             className="w-full h-full object-cover hover:scale-105 transition duration-500"
             alt={vendor.name}
           />
@@ -150,7 +151,7 @@ useEffect(() => {
                 key={i}
                 className="rounded-2xl overflow-hidden border shadow hover:scale-[1.02] transition"
               >
-                <img src={img} className="h-44 w-full object-cover" />
+                <img src={img?.url} className="h-44 w-full object-cover" />
               </div>
             ))}
           </div>

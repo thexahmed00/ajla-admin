@@ -1,4 +1,5 @@
 "use client";
+import { uploadToImageKit } from "@/app/lib/imagekitUpload";
 import { useState, useEffect } from "react";
 
 interface AddCategoryModalProps {
@@ -53,6 +54,7 @@ export default function AddCategoryModal({
   };
 
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
 
 const handleSubmit = async (e: React.FormEvent) => {
@@ -184,7 +186,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           {/* Icon URL */}
           <div>
             <label className="text-sm text-text-muted">Icon URL</label>
-            <input
+            {/* <input
               className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-1 focus:ring-primary outline-none"
               placeholder="https://icon.png"
               value={form.icon_url}
@@ -192,7 +194,34 @@ const handleSubmit = async (e: React.FormEvent) => {
                 handleChange("icon_url", e.target.value);
                 setPreviewError(false);
               }}
-            />
+            /> */}
+           
+
+<input
+  type="file"
+  accept="image/*"
+    className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-1 focus:ring-primary outline-none"
+
+  onChange={async (e) => {
+    if (!e.target.files?.[0]) return;
+
+    setUploading(true);
+
+    try {
+      const imageUrl = await uploadToImageKit(e.target.files[0], {
+        folder: "/icons",
+      });
+
+      handleChange("icon_url", imageUrl);
+      setPreviewError(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  }}
+/>
+
           </div>
 
           {/* Preview */}

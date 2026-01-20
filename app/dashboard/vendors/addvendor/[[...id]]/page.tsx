@@ -349,6 +349,7 @@ export default function AddVendorPage() {
 
   // image upload logic here
   const [uploading, setUploading] = useState(false);
+  const [dishUploading, setDishUploading] = useState(false);
 
 
   const updateHeroImage = (index: number, updates: Partial<ImageItem>) => {
@@ -806,7 +807,7 @@ export default function AddVendorPage() {
                             }}
                           />
 
-                          <input
+                          {/* <input
                             className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
                             placeholder="Image URL"
                             value={dish?.image || ""}
@@ -815,7 +816,35 @@ export default function AddVendorPage() {
                               updated[i].dishes[j].image = e.target.value;
                               handleMetadataChange("courses", updated);
                             }}
+                          /> */}
+
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={uploading}
+                            className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+                            onChange={async (e) => {
+                              if (!e.target.files?.[0]) return;
+
+                              setDishUploading(true);
+
+                              try {
+                                const imageUrl = await uploadToImageKit(e.target.files[0], {
+                                  folder: "/dishes",
+                                });
+
+                                const updated = [...(form.metadata.courses || [])];
+                                updated[i].dishes[j].image = imageUrl;
+
+                                handleMetadataChange("courses", updated);
+                              } catch (err) {
+                                console.error(err);
+                              } finally {
+                                setDishUploading(false);
+                              }
+                            }}
                           />
+
 
                           <input
                             className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
@@ -1074,7 +1103,7 @@ export default function AddVendorPage() {
                         }}
                       />
 
-                      <input
+                      {/* <input
                         placeholder="Icon (wifi / pool / spa)"
                         value={a.icon || ""}
                         className="bg-secondary border border-border rounded-lg px-3 py-2"
@@ -1083,7 +1112,34 @@ export default function AddVendorPage() {
                           updated[i].icon = e.target.value;
                           handleMetadataChange("amenities", updated);
                         }}
+                      /> */}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+                        disabled={uploading}
+                        onChange={async (e) => {
+                          if (!e.target.files?.[0]) return;
+
+                          setUploading(true);
+
+                          try {
+                            const iconUrl = await uploadToImageKit(e.target.files[0], {
+                              folder: "/amenities",
+                            });
+
+                            const updated = [...form.metadata.amenities];
+                            updated[i].icon = iconUrl;
+
+                            handleMetadataChange("amenities", updated);
+                          } catch (err) {
+                            console.error(err);
+                          } finally {
+                            setUploading(false);
+                          }
+                        }}
                       />
+
 
                       <input
                         placeholder="Subtitle"
@@ -1149,13 +1205,40 @@ export default function AddVendorPage() {
                           handleMetadataChange("nearby_attractions", u);
                         }}
                       />
+                      {/* <label htmlFor="">
 
+                      Upload Icon
                       <input placeholder="Icon" value={a.icon || ""}
                         className="bg-secondary border border-border rounded-lg px-3 py-2"
                         onChange={(e) => {
                           const u = [...form.metadata.nearby_attractions];
                           u[i].icon = e.target.value;
                           handleMetadataChange("nearby_attractions", u);
+                        }}
+                      />
+                      </label> */}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="bg-secondary border border-border rounded-lg px-4 py-2.5 text-sm"
+                        onChange={async (e) => {
+                          if (!e.target.files?.[0]) return;
+
+                          setUploading(true);
+
+                          try {
+                            const iconUrl = await uploadToImageKit(e.target.files[0], {
+                              folder: "/nearby-attractions",
+                            });
+
+                            const u = [...form.metadata.nearby_attractions];
+                            u[i].icon = iconUrl;
+                            handleMetadataChange("nearby_attractions", u);
+                          } catch (err) {
+                            console.error(err);
+                          } finally {
+                            setUploading(false);
+                          }
                         }}
                       />
 
@@ -1209,9 +1292,33 @@ export default function AddVendorPage() {
                         onChange={(e) => { const u = [...form.metadata.room_types]; u[i].price = e.target.value; handleMetadataChange("room_types", u) }}
                       />
 
-                      <input placeholder="Image URL" value={room.image || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
-                        onChange={(e) => { const u = [...form.metadata.room_types]; u[i].image = e.target.value; handleMetadataChange("room_types", u) }}
+
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="bg-secondary border border-border rounded-lg px-3 py-2"
+                        onChange={async (e) => {
+                          if (!e.target.files?.[0]) return;
+
+                          setUploading(true);
+
+                          try {
+                            const imageUrl = await uploadToImageKit(e.target.files[0], {
+                              folder: "/room-types",
+                            });
+
+                            const u = [...form.metadata.room_types];
+                            u[i].image = imageUrl;
+                            handleMetadataChange("room_types", u);
+                          } catch (err) {
+                            console.error(err);
+                          } finally {
+                            setUploading(false);
+                          }
+                        }}
                       />
+
 
                       <textarea placeholder="Description" value={room.description || ""} className="bg-secondary border border-border rounded-lg px-3 py-2"
                         onChange={(e) => { const u = [...form.metadata.room_types]; u[i].description = e.target.value; handleMetadataChange("room_types", u) }}
@@ -1421,7 +1528,7 @@ export default function AddVendorPage() {
                     }}
                   />
 
-                  <input
+                  {/* <input
                     className="w-full mb-2 bg-secondary border border-border rounded-lg px-4 py-3"
                     placeholder="Image URL"
                     value={jet.image}
@@ -1429,6 +1536,30 @@ export default function AddVendorPage() {
                       const updated = [...form.metadata.jet_types];
                       updated[i] = { ...updated[i], image: e.target.value };
                       handleMetadataChange("jet_types", updated);
+                    }}
+                  /> */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full mb-2 bg-secondary border border-border rounded-lg px-4 py-3"
+                    onChange={async (e) => {
+                      if (!e.target.files?.[0]) return;
+
+                      setUploading(true);
+
+                      try {
+                        const imageUrl = await uploadToImageKit(e.target.files[0], {
+                          folder: "/jet-types",
+                        });
+
+                        const updated = [...form.metadata.jet_types];
+                        updated[i] = { ...updated[i], image: imageUrl };
+                        handleMetadataChange("jet_types", updated);
+                      } catch (err) {
+                        console.error(err);
+                      } finally {
+                        setUploading(false);
+                      }
                     }}
                   />
 
