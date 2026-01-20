@@ -146,7 +146,7 @@ useEffect(() => {
           <h2 className="text-2xl font-bold mb-4">Gallery</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {vendor.gallery_images.map((img: string, i: number) => (
+            {vendor.gallery_images.map((img: any, i: number) => (
               <div
                 key={i}
                 className="rounded-2xl overflow-hidden border shadow hover:scale-[1.02] transition"
