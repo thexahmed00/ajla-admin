@@ -6,7 +6,34 @@ interface BookingRowProps {
         index: number;
     }
 export default function BookingRow({ booking, index }: BookingRowProps) {
+    console.log("Booking",booking)
     
+
+    function extractDateTime(isoString: string) {
+  const date = new Date(isoString);
+
+  const formattedDate = date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return {
+    date: formattedDate, // 15 Jan 2026
+    time: formattedTime, // 06:14 AM
+  };
+}
+
+
+
+
+
     return (
         <tr
             className="
@@ -27,24 +54,24 @@ export default function BookingRow({ booking, index }: BookingRowProps) {
               font-semibold text-text-main 
               group-hover:text-primary transition-colors truncate
             ">
-                            Booking #12345
+                            Booking #{booking?.id}
                         </p>
 
                         <div className="flex items-center gap-4 mt-1 text-xs text-text-muted">
                             <span className="flex items-center gap-1">
                                 <CalendarDays className="w-3.5 h-3.5" />
-                                04 Jan 2026
+                                {   extractDateTime(booking?.created_at).date  }
                             </span>
 
                             <span className="flex items-center gap-1">
                                 <Clock className="w-3.5 h-3.5" />
-                                7:30 PM
+                                {   extractDateTime(booking?.created_at).time  }
                             </span>
 
-                            <span className="flex items-center gap-1">
+                            {/* <span className="flex items-center gap-1">
                                 <User className="w-3.5 h-3.5" />
                                 Mustafa Khan
-                            </span>
+                            </span> */}
                         </div>
                     </div>
                 </div>
@@ -58,14 +85,14 @@ export default function BookingRow({ booking, index }: BookingRowProps) {
           bg-green-500/10 text-green-500
           border border-green-500/20
         ">
-                    Confirmed
+                    {booking?.status}
                 </span>
             </td>
 
             {/* Amount */}
-            <td className="px-6 py-4 text-text-main font-medium">
+            {/* <td className="px-6 py-4 text-text-main font-medium">
                 ₹12,000
-            </td>
+            </td> */}
 
             {/* Actions */}
             <td className="px-6 py-4">
@@ -75,7 +102,9 @@ export default function BookingRow({ booking, index }: BookingRowProps) {
           transition-all duration-300
         ">
                     {/* View */}
-                    <button
+                    <Link
+                    // href={`/dashboard/bookinginfo/${booking?.id}`}
+                    href={""}
                         className="
               w-9 h-9 flex items-center justify-center
               rounded-lg border border-border
@@ -86,10 +115,10 @@ export default function BookingRow({ booking, index }: BookingRowProps) {
                         title="View"
                     >
                         <Eye className="w-4 h-4" />
-                    </button>
+                    </Link>
 
                     {/* Edit */}
-                    <Link
+                    {/* <Link
                         href="/bookings/12345"
                         className="
               w-9 h-9 flex items-center justify-center
@@ -101,7 +130,7 @@ export default function BookingRow({ booking, index }: BookingRowProps) {
                         title="Edit Booking"
                     >
                         <Pencil className="w-4 h-4" />
-                    </Link>
+                    </Link> */}
 
                     {/* Delete */}
                     <button

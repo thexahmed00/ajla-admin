@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Plus, Store } from "lucide-react";
 import { Plan } from "../types/plan";
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, CheckCircle, XCircle, Clock, IndianRupee,SaudiRiyal } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, XCircle, Clock, IndianRupee, SaudiRiyal } from "lucide-react";
 import PlanFormModal from "../components/PlanFormModal";
 
 
@@ -37,6 +37,110 @@ export default function PlansPage() {
             .finally(() => setLoading(false));
     }, []);
 
+
+    async function createPlan(payload: Partial<Plan>) {
+        let token = localStorage.getItem("access_token")
+        const res = await fetch("/api/plans", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || "Failed to create plan");
+        }
+        fetchPlans()
+            .then((data) => {
+                setPlans(data.plans);
+            })
+            .finally(() => setLoading(false));
+        return res.json();
+    }
+
+
+    async function updatePlan(payload: any) {
+        const token = localStorage.getItem("access_token");
+
+        const res = await fetch("/api/updateplan", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload), // includes id
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || "Update failed");
+        }
+        fetchPlans()
+            .then((data) => {
+                setPlans(data.plans);
+            })
+            .finally(() => setLoading(false));
+
+        return res.json();
+    }
+
+
+    async function deletePlan(id: number | string) {
+        console.log("Deleting plan with id:", id);
+  const token = localStorage.getItem("access_token");
+
+  const res = await fetch("/api/deleteplan", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ id }),
+  });
+
+  // ✅ 204 = success, no body
+  if (res.status === 204) {
+    setPlans((prev) => prev.filter((p) => p.id !== id));
+    return true;
+  }
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Delete failed");
+  }
+
+  return true;
+}
+
+
+
+    // async function updatePlan(
+    //   planId: number | string,
+    //   payload: Partial<Plan>
+    // ) {
+    //   const res = await fetch(`${API_BASE}/${planId}`, {
+    //     method: "PUT", // or PATCH (based on backend)
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${getToken()}`,
+    //     },
+    //     body: JSON.stringify(payload),
+    //   });
+
+    //   if (!res.ok) {
+    //     const err = await res.json();
+    //     throw new Error(err.message || "Failed to update plan");
+    //   }
+
+    //   return res.json();
+    // }
+
+
+
+
     return (
         <div className="space-y-6 overflow-x-hidden max-w-7xl mx-auto">
 
@@ -58,10 +162,10 @@ export default function PlansPage() {
 
                 <button
                     onClick={() => {
-    setSelectedPlan(null);
-    setMode("create");
-    setModalOpen(true);
-  }}
+                        setSelectedPlan(null);
+                        setMode("create");
+                        setModalOpen(true);
+                    }}
                     className="inline-flex items-center justify-center gap-2 w-full md:w-auto px-5 py-3 rounded-xl 
           bg-gradient-to-r from-primary to-primary-hover text-surface font-semibold 
           hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5
@@ -202,6 +306,7 @@ export default function PlansPage() {
                                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 transition-all duration-200"
                                             title="Delete"
                                         //   onClick={() => deletePlan(plan.id)}
+                                        onClick={()=>deletePlan(plan?.id)}
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
@@ -213,20 +318,43 @@ export default function PlansPage() {
                 </tbody>
 
             </table>
-                    <PlanFormModal
-  open={modalOpen}
-  mode={mode}
-  initialData={selectedPlan}
-  onClose={() => setModalOpen(false)}
-  onSubmit={(payload) => {
-    if (mode === "create") {
-      console.log("Create payload", payload);
-    } else {
-      console.log("Update payload", payload);
-    }
-    setModalOpen(false);
-  }}
-/>
+            <PlanFormModal
+                open={modalOpen}
+                mode={mode}
+                initialData={selectedPlan}
+                onClose={() => setModalOpen(false)}
+                onSubmit={async (payload) => {
+                    try {
+                        if (mode === "create") {
+                            console.log("Create payload", payload);
+
+                            await createPlan({
+                                ...payload,
+                                price: Number(payload.price),
+                                duration_days: Number(payload.duration_days),
+                                tier: Number(payload.tier),
+                                features: payload.features?.filter(Boolean),
+                            });
+                        } else {
+                            console.log("Update payload", payload);
+
+                            await updatePlan({
+                                id: selectedPlan.id, // ✅ REQUIRED
+                                ...payload,
+                                price: Number(payload.price),
+                                duration_days: Number(payload.duration_days),
+                                tier: Number(payload.tier),
+                                features: payload.features?.filter(Boolean),
+                            });
+                        }
+
+                        setModalOpen(false);
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }}
+            />
+
 
         </div>
     );

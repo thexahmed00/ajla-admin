@@ -11,6 +11,7 @@ import Restaurant from "../../../public/icons/Restaurant.png";
 
 
 interface CategoryCardProps {
+  id:number
   icon: string;
   title: string;
   slug: string;
@@ -32,6 +33,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 
 
 const CategoryCard = ({
+  id,
   icon,
   title,
   slug,
@@ -54,13 +56,13 @@ const CategoryCard = ({
           style={{ background: gradient }}
         >
           {/* <img src={icon} alt="Icon" className="h-full w-full md:h-10 md:w-10 text-white" /> */}
-          {IconImage && (
-  <Image
-    src={IconImage}
-    alt={title}
-    className="h-8 w-8 md:h-10 md:w-10 object-contain"
-  />
-)}
+          {/* {IconImage && ( */}
+            <img
+              src={icon}
+              alt={title}
+              className="h-8 w-8 md:h-10 md:w-10 object-contain"
+            />
+          {/* // )} */}
 
         </div>
 

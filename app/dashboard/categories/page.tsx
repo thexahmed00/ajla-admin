@@ -51,30 +51,36 @@ const Categories = () => {
 
   // ---------- DELETE HANDLER ----------
   const handleDelete = async (slug: string) => {
-    const cat = categories.find((c) => c.slug === slug);
-    if (!cat) return;
+  const cat = categories.find((c) => c.slug === slug);
+  if (!cat) return;
 
-    if (!confirm("Are you sure you want to delete this category?")) return;
+  if (!confirm("Are you sure you want to delete this category?")) return;
 
-    try {
-      const token = localStorage.getItem("access_token");
+  try {
+    const token = localStorage.getItem("access_token");
 
-      const res = await fetch(`/api/categories/${cat.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const res = await fetch("/api/deletecategory", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`, // keep only this
+      },
+      body: JSON.stringify({ id: cat.id }),
+    });
 
-      if (!res.ok) throw new Error("Delete failed");
-
-      setCategories((prev) => prev.filter((c) => c.id !== cat.id));
-      console.log("Category deleted");
-    } catch (error) {
-      console.error("Delete error", error);
-      alert("Failed to delete category");
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Delete failed:", err);
+      throw new Error("Delete failed");
     }
-  };
+
+    setCategories((prev) => prev.filter((c) => c.id !== cat.id));
+    console.log("Category deleted");
+  } catch (error) {
+    console.error("Delete error", error);
+    alert("Failed to delete category");
+  }
+};
+
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -108,8 +114,8 @@ const Categories = () => {
 
           <button
             className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "grid"
-                ? "bg-primary/10 text-primary"
-                : "text-gray-500"
+              ? "bg-primary/10 text-primary"
+              : "text-gray-500"
               }`}
             onClick={() => setViewMode("grid")}
           >
@@ -119,8 +125,8 @@ const Categories = () => {
 
           <button
             className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "list"
-                ? "bg-primary/10 text-primary"
-                : "text-gray-500"
+              ? "bg-primary/10 text-primary"
+              : "text-gray-500"
               }`}
             onClick={() => setViewMode("list")}
           >
@@ -141,13 +147,14 @@ const Categories = () => {
       {!loading && (
         <div
           className={`grid gap-4 md:gap-6 ${viewMode === "grid"
-              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-              : "grid-cols-1"
+            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            : "grid-cols-1"
             }`}
         >
           {categories.map((cat) => (
             <CategoryCard
               key={cat.id}
+              id={cat.id}
               icon={cat.icon_url || PLACEHOLDER}
               title={cat.name}
               slug={cat.slug}

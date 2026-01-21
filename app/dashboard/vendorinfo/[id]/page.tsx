@@ -14,7 +14,7 @@ export default function VendorDetailsUI() {
     const {id} = useParams();
 const [vendor, setVendor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  console.log("vendor id",id)
 useEffect(() => {
   if (!id) return;
 
@@ -27,7 +27,7 @@ useEffect(() => {
       if (!res.ok) throw new Error("Failed to fetch vendor");
 
       const data = await res.json();
-      console.log("vendor data ",data?.data )
+      // console.log("vendor data ",data?.data )
       setVendor(data?.data || data);
     } catch (err) {
       console.error(err);
@@ -50,7 +50,7 @@ useEffect(() => {
 
 
   return (
-    <div className="max-w-6xl mx-auto py-10 space-y-10">
+    <div className="max-w-6xl mx-auto py-10 space-y-10 bg-surface/50">
 
       {/* HERO */}
       {vendor?.hero_images?.length > 0 && (
@@ -96,7 +96,8 @@ useEffect(() => {
 
           {vendor.whatsapp && (
             <a
-              href={`https://wa.me/${vendor.whatsapp}`}
+            href=""
+              // href={`https://wa.me/${vendor.whatsapp}`}
               target="_blank"
               className="px-5 py-2.5 rounded-xl bg-green-500/10 text-green-600 border border-green-500/30 flex items-center gap-2 hover:bg-green-600 hover:text-white transition"
             >

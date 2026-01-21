@@ -12,7 +12,7 @@ const menu = [
   { name: "Vendors", href: "/dashboard/vendors", icon: Store },
   { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
   { name: "Bookings", href: "/dashboard/bookings", icon: Book },
-  // { name: "Plans", href: "/dashboard/plans", icon: CheckSquare },
+  { name: "Plans", href: "/dashboard/plans", icon: CheckSquare },
 ];
 
 export default function MobileSidebar() {

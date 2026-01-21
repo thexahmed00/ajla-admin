@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { isAdmin } from "../../lib/auth";
-import { MessageSquare, Users, Grid3X3, Clock, ChevronRight } from "lucide-react";
+import { MessageSquare, Users, Grid3X3, Clock, ChevronRight, Send, X, } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 
 type ConversationApi = {
   id: number;
@@ -32,6 +33,10 @@ export default function DashboardPage() {
   const [conversationsData, setConversationsData] = useState<ConversationUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [convoCount, setConvoCount] = useState<number>(0);
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const [whatsappMessage, setWhatsappMessage] = useState("");
+  const [activeConversation, setActiveConversation] = useState<ConversationUI | null>(null);
+
   useEffect(() => {
     if (!isAdmin()) router.replace("/login");
   }, []);
@@ -41,7 +46,7 @@ export default function DashboardPage() {
       let token = localStorage.getItem("access_token")
       try {
         // const data = await fetchDashboardStats();
-        const res = await fetch("/api/conversations?skip=0&limit=20",{
+        const res = await fetch("/api/conversations?skip=0&limit=20", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -97,7 +102,7 @@ export default function DashboardPage() {
         <h1 className="text-2xl md:text-3xl font-bold text-text-main mb-2">
           Conversations
         </h1>
-        
+
       </div>
 
 
@@ -114,11 +119,12 @@ export default function DashboardPage() {
             </h2>
           </div>
 
-        
+
         </div>
 
         <div className="divide-y divide-border/50">
           {conversationsData.map((conv) => (
+
             <Link
               key={conv.id}
               href={`/dashboard/conversation/${conv.id}`}
@@ -143,20 +149,95 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
+                {/* RIGHT SIDE */}
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   <span className="text-xs text-text-dim">{conv.updatedAt}</span>
 
-                  {conv.unreadCount > 0 && (
-                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-surface animate-pulse">
-                      {conv.unreadCount}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {/* WhatsApp Button */}
+                    <button
+                      onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveConversation(conv);
+    setWhatsappOpen(true);
+  }}
+                      className="p-1.5 rounded-full bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-colors"
+                      title="Open WhatsApp"
+                    >
+                      <FaWhatsapp className="w-4 h-4" />
+                    </button>
+
+                    {/* Unread badge */}
+                    {conv.unreadCount > 0 && (
+                      <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-surface animate-pulse">
+                        {conv.unreadCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </Link>
           ))}
         </div>
       </div>
+      {whatsappOpen && activeConversation && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-md rounded-xl bg-surface shadow-lg p-6 animate-in fade-in zoom-in">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-text-main">
+          WhatsApp Message
+        </h3>
+        <button
+          onClick={() => setWhatsappOpen(false)}
+          className="p-1 rounded-md hover:bg-surface-hover"
+        >
+          <X className="w-5 h-5 text-text-muted" />
+        </button>
+      </div>
+
+      {/* Recipient */}
+      <p className="text-sm text-text-muted mb-3">
+        Sending to <span className="font-medium text-text-main">{activeConversation.userName}</span>
+      </p>
+
+      {/* Input */}
+      <textarea
+        value={whatsappMessage}
+        onChange={(e) => setWhatsappMessage(e.target.value)}
+        placeholder="Type your message..."
+        className="w-full min-h-[100px] rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+      />
+
+      {/* Actions */}
+      <div className="mt-4 flex justify-end gap-2">
+        <button
+          onClick={() => setWhatsappOpen(false)}
+          className="px-4 py-2 rounded-lg text-sm border border-border hover:bg-surface-hover"
+        >
+          Cancel
+        </button>
+
+        <button
+          // onClick={() => {
+          //   const text = encodeURIComponent(whatsappMessage);
+          //   window.open(`https://wa.me/?text=${text}`, "_blank");
+          //   setWhatsappMessage("");
+          //   setWhatsappOpen(false);
+          // }}
+          disabled={!whatsappMessage.trim()}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-medium hover:bg-green-600 disabled:opacity-50"
+        >
+          <Send className="w-4 h-4" />
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

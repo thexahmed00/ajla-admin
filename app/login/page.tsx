@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Logo from "../../public/icons/logo.svg"
+import Image from "next/image";
 
 type DecodedToken = {
   email: string;
@@ -81,9 +83,14 @@ export default function LoginPage() {
         <div className="glass rounded-2xl p-8 md:p-10 shadow-2xl shadow-black/50 animate-fade-in-up">
           {/* Logo */}
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold tracking-[0.25em] mb-2 gradient-text">
-              AJLA
-            </h1>
+            <Image
+                src={Logo}   // public/ajla-logo.jpeg
+                alt="AJLA"
+                width={120}
+                height={32}
+                className="object-contain mt-2 justify-center mx-auto mb-2"
+                priority
+              />
             <p className="text-primary/80 text-xs font-medium tracking-[0.3em] uppercase">
               Admin Dashboard
             </p>
