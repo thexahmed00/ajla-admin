@@ -318,6 +318,91 @@ export default function PlansPage() {
                 </tbody>
 
             </table>
+            {/* Mobile View */}
+<div className="md:hidden space-y-4">
+    {loading ? (
+        <div className="text-center py-8 text-text-muted">
+            Loading plans...
+        </div>
+    ) : plans.length === 0 ? (
+        <div className="text-center py-8 text-text-muted">
+            No plans found
+        </div>
+    ) : (
+        plans.map((plan) => (
+            <div
+                key={plan.id}
+                className="bg-surface rounded-xl border border-border p-4 space-y-3 shadow-sm"
+            >
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                    <div>
+                        <p className="font-semibold text-text-main">
+                            {plan.name}
+                        </p>
+                        <p className="text-xs text-text-muted line-clamp-2">
+                            {plan.description}
+                        </p>
+                    </div>
+
+                    {/* Status */}
+                    {plan.is_active ? (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/10">
+                            Active
+                        </span>
+                    ) : (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/10">
+                            Inactive
+                        </span>
+                    )}
+                </div>
+
+                {/* Meta Info */}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-1.5">
+                        <SaudiRiyal className="w-4 h-4 text-primary" />
+                        <span className="font-medium">{plan.price}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                        <Clock className="w-4 h-4 text-blue-400" />
+                        <span>{plan.duration_days} days</span>
+                    </div>
+
+                    <div>
+                        <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/10">
+                            Tier {plan.tier}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Actions (Always Visible) */}
+                <div className="flex gap-2 pt-3 border-t border-border">
+                    <button
+                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 text-text-muted hover:text-primary transition"
+                        onClick={() => {
+                            setSelectedPlan(plan);
+                            setMode("edit");
+                            setModalOpen(true);
+                        }}
+                    >
+                        <Pencil className="w-4 h-4" />
+                        Edit
+                    </button>
+
+                    <button
+                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/10 transition"
+                        onClick={() => deletePlan(plan.id)}
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                    </button>
+                </div>
+            </div>
+        ))
+    )}
+</div>
+
             <PlanFormModal
                 open={modalOpen}
                 mode={mode}
