@@ -67,7 +67,7 @@ export default function BookingsPage() {
 
       {/* TABLE */}
       <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-sm">
-        <table className="hidden md:table w-full text-sm">
+        <table className="w-full text-sm">
           <tbody className="divide-y divide-border/50">
             {loading ? (
               <tr><td className="p-6 text-center">Loading...</td></tr>
@@ -83,6 +83,7 @@ export default function BookingsPage() {
             )}
           </tbody>
         </table>
+        
       </div>
     </div>
   );

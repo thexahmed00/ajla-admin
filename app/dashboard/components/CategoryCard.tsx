@@ -81,7 +81,15 @@ const CategoryCard = ({
         <div className="relative mb-4 h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
 
         {/* === EDIT + DELETE ICONS === */}
-        <div className="absolute bottom-4 left-4 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-2 group-hover:translate-x-0">
+        <div 
+        className="
+    absolute bottom-4 left-4 flex items-center gap-3
+    opacity-100 md:opacity-0
+    md:group-hover:opacity-100
+    transition-all duration-200
+    md:-translate-x-2 md:group-hover:translate-x-0
+  "
+        >
 
           {/* Edit */}
           <button
