@@ -4,9 +4,9 @@ import VendorsToolbar from "../components/VendorsToolbar";
 import VendorsTable from "../components/VendorsTable";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { fetchVendors } from "@/app/lib/vendors";
 import { Vendor } from "../types/vendor";
 import { Plus, Store } from "lucide-react";
+import { fetchVendors } from "@/app/[locale]/lib/vendors";
 
 export default function VendorsPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);

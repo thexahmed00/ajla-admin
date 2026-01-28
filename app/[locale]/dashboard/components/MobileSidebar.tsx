@@ -1,10 +1,12 @@
 "use client";
 
-import { logout } from "@/app/lib/auth";
+import { logout } from "@/app/[locale]/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut,Book,CheckSquare } from "lucide-react";
+import Logo from "../../../../public/icons/logo.svg";
+import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut,Book,CheckSquare, User } from "lucide-react";
+import Image from "next/image";
 
 const menu = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -13,6 +15,7 @@ const menu = [
   { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
   { name: "Bookings", href: "/dashboard/bookings", icon: Book },
   { name: "Plans", href: "/dashboard/plans", icon: CheckSquare },
+  { name: "Users", href: "/dashboard/users", icon: User },
 ];
 
 export default function MobileSidebar() {
@@ -47,10 +50,17 @@ export default function MobileSidebar() {
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
-          <h1 className="text-xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
-            AJLA
-            <span className="text-primary text-xs font-semibold tracking-wider">ADMIN</span>
-          </h1>
+          <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
+                    <Image
+                      src={Logo}
+                      alt="AJLA"
+                      width={120}
+                      height={32}
+                      className="object-contain mt-2"
+                      priority
+                    />
+                    <span className="text-primary text-xs font-semibold">ADMIN</span>
+                  </h1>
           <button
             onClick={() => setOpen(false)}
             className="p-2 rounded-lg hover:bg-surface-hover text-text-muted hover:text-text-main transition-colors"

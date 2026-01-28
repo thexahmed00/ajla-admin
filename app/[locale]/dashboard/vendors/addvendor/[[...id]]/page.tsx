@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, Check, ArrowRight, ArrowLeft } from "lucide-react";
 import { metaDefaults } from "../metaSchema";
 import { useParams } from "next/navigation";
-import { uploadToImageKit } from "@/app/lib/imagekitUpload";
+import { uploadToImageKit } from "@/app/[locale]/lib/imagekitUpload";
 
 type Dish = {
   category: string;

@@ -1,5 +1,5 @@
 "use client";
-import { uploadToImageKit } from "@/app/lib/imagekitUpload";
+import { uploadToImageKit } from "@/app/[locale]/lib/imagekitUpload";
 import { useState, useEffect } from "react";
 
 interface AddCategoryModalProps {

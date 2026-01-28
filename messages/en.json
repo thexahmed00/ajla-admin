@@ -1,0 +1,12 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "conversations": "Conversations",
+    "vendors": "Vendors",
+    "categories": "Categories",
+    "bookings": "Bookings",
+    "plans": "Plans",
+    "users": "Users",
+    "logout": "Logout"
+  }
+}

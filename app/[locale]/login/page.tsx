@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import Logo from "../../public/icons/logo.svg"
+import Logo from "../../../public/icons/logo.svg"
 import Image from "next/image";
 
 type DecodedToken = {

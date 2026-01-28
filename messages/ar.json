@@ -1,0 +1,12 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "conversations": "المحادثات",
+    "vendors": "البائعون",
+    "categories": "التصنيفات",
+    "bookings": "الحجوزات",
+    "plans": "الخطط",
+    "users": "المستخدمون",
+    "logout": "تسجيل الخروج"
+  }
+}
