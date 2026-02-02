@@ -3,14 +3,24 @@
 import { usePathname, useRouter } from "@/i18n";
 import { useLocale } from "next-intl";
 
+const locales = ["en", "ar"] as const;
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
 
   const switchLocale = (nextLocale: "en" | "ar") => {
-    router.push(pathname, { locale: nextLocale });
+    // Remove the current locale from the pathname
+    const segments = pathname.split("/").filter(Boolean);
+
+    if (locales.includes(segments[0] as any)) {
+      segments.shift();
+    }
+
+    const cleanPath = "/" + segments.join("/");
+
+    router.replace(cleanPath || "/", { locale: nextLocale });
   };
 
   return (

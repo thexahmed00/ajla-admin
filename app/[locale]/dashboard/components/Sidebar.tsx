@@ -114,7 +114,8 @@ import {
   LogOut,
   Book,
   CheckSquare,
-  User
+  User,
+  GalleryThumbnails
 } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -122,13 +123,14 @@ import Logo from "../../../../public/icons/logo.svg";
 import LanguageSwitcher from "./SwitchButton";
 
 const menu = [
-  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { key: "conversations", href: "/dashboard/conversations", icon: MessageSquare },
-  { key: "vendors", href: "/dashboard/vendors", icon: Store },
-  { key: "categories", href: "/dashboard/categories", icon: Grid3X3 },
-  { key: "bookings", href: "/dashboard/bookings", icon: Book },
-  { key: "plans", href: "/dashboard/plans", icon: CheckSquare },
-  { key: "users", href: "/dashboard/users", icon: User }
+  { key: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { key: "Conversations", href: "/dashboard/conversations", icon: MessageSquare },
+  { key: "Vendors", href: "/dashboard/vendors", icon: Store },
+  { key: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
+  { key: "Bookings", href: "/dashboard/bookings", icon: Book },
+  { key: "Plans", href: "/dashboard/plans", icon: CheckSquare },
+  { key: "Users", href: "/dashboard/users", icon: User },
+  { key: "Banners", href: "/dashboard/banners", icon: GalleryThumbnails }
 ];
 
 export default function Sidebar() {
@@ -195,7 +197,7 @@ export default function Sidebar() {
                 />
 
                 <span className={`font-medium text-sm ${active ? "font-semibold" : ""}`}>
-                  {t(item.key)}
+                  {item.key}
                 </span>
 
                 {active && (

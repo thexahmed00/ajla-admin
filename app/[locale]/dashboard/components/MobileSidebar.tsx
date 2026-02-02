@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import Logo from "../../../../public/icons/logo.svg";
-import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut,Book,CheckSquare, User } from "lucide-react";
+import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut, Book, CheckSquare, User, GalleryThumbnails } from "lucide-react";
 import Image from "next/image";
 
 const menu = [
@@ -16,6 +16,7 @@ const menu = [
   { name: "Bookings", href: "/dashboard/bookings", icon: Book },
   { name: "Plans", href: "/dashboard/plans", icon: CheckSquare },
   { name: "Users", href: "/dashboard/users", icon: User },
+  { name: "Banners", href: "/dashboard/banners", icon: GalleryThumbnails },
 ];
 
 export default function MobileSidebar() {
@@ -51,16 +52,16 @@ export default function MobileSidebar() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <h1 className="text-2xl tracking-[0.15em] font-bold text-text-main flex items-baseline gap-1">
-                    <Image
-                      src={Logo}
-                      alt="AJLA"
-                      width={120}
-                      height={32}
-                      className="object-contain mt-2"
-                      priority
-                    />
-                    <span className="text-primary text-xs font-semibold">ADMIN</span>
-                  </h1>
+            <Image
+              src={Logo}
+              alt="AJLA"
+              width={120}
+              height={32}
+              className="object-contain mt-2"
+              priority
+            />
+            <span className="text-primary text-xs font-semibold">ADMIN</span>
+          </h1>
           <button
             onClick={() => setOpen(false)}
             className="p-2 rounded-lg hover:bg-surface-hover text-text-muted hover:text-text-main transition-colors"
@@ -84,11 +85,10 @@ export default function MobileSidebar() {
                 onClick={() => setOpen(false)}
               >
                 <div
-                  className={`relative px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 flex items-center gap-3 ${
-                    active
+                  className={`relative px-4 py-3 rounded-xl cursor-pointer transition-all duration-200 flex items-center gap-3 ${active
                       ? "bg-primary/10 text-primary"
                       : "text-text-muted hover:text-text-main hover:bg-surface-hover"
-                  }`}
+                    }`}
                 >
                   {active && (
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-primary" />

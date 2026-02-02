@@ -97,6 +97,7 @@ export default function DashboardPage() {
       </div>
     );
   }
+  
 
   return (
     <div className="w-full max-w-7xl mx-auto">

@@ -21,6 +21,7 @@ export default async function RootLayout({
 }) {
   // ✅ UNWRAP params
   const { locale } = await params;
+  const messages = (await import(`../../messages/${locale}.json`)).default;
 
   if (!locales.includes(locale)) {
     notFound();
@@ -29,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`${inter.variable} ${poppins.variable}`}>
-        <NextIntlClientProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>
