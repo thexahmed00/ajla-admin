@@ -1,13 +1,13 @@
 import { LucideIcon, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import Boat from "../../../public/icons/Boat.png";
+import Boat from "../../../../public/icons/Boat.png";
 import CarDriver from "../../../public/icons/Car & Driver.png";
-import Car from "../../../public/icons/Car.png";
-import Flight from "../../../public/icons/Flight.png";
-import Hotel from "../../../public/icons/Hotel.png";
-import PrivateJet from "../../../public/icons/Private Jet.png";
-import Restaurant from "../../../public/icons/Restaurant.png";
+import Car from "../../../../public/icons/Car.png";
+import Flight from "../../../../public/icons/Flight.png";
+import Hotel from "../../../../public/icons/Hotel.png";
+import PrivateJet from "../../../../public/icons/Private Jet.png";
+import Restaurant from "../../../../public/icons/Restaurant.png";
 
 
 interface CategoryCardProps {
