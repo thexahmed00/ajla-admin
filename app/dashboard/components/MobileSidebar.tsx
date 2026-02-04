@@ -8,7 +8,7 @@ import { Menu, X, LayoutDashboard, MessageSquare, Store, Grid3X3, LogOut,Book } 
 
 const menu = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Conversations", href: "/dashboard/conversations/1", icon: MessageSquare },
+  { name: "Conversations", href: "/dashboard/conversations", icon: MessageSquare },
   { name: "Vendors", href: "/dashboard/vendors", icon: Store },
   { name: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
   { name: "Bookings", href: "/dashboard/bookings", icon: Book },

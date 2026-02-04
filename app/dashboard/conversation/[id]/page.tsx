@@ -17,6 +17,44 @@ const [confirmLoading, setConfirmLoading] = useState(false);
 
   const conversationId = id; // <-- Use dynamic id from URL
 
+  // Fetch messages on mount
+  useEffect(() => {
+    async function fetchMessages() {
+      const token = localStorage.getItem("access_token");
+      if (!token || !conversationId) return;
+
+      try {
+        const res = await fetch(`/api/conversations/${conversationId}/messages`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch messages");
+
+        const data = await res.json();
+        console.log("Conversation data:", data);
+
+        // Map API messages to Message type
+        const fetchedMessages: Message[] = (data.messages || []).map((m: any) => ({
+          id: String(m.id),
+          sender: m.role === "admin" ? "admin" : "user",
+          text: m.content,
+          time: new Date(m.created_at).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }));
+
+        setMessages(fetchedMessages);
+      } catch (err) {
+        console.error("Failed to fetch messages", err);
+      }
+    }
+
+    fetchMessages();
+  }, [conversationId]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
