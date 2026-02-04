@@ -1,10 +1,9 @@
 "use client";
 import Link from "next/link";
 import StatCard from "./components/StatCard";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isAdmin } from "../lib/auth";
 import { fetchDashboardStats } from "../lib/api";
+import { useProtectedRoute } from "../lib/useProtectedRoute";
 import { MessageSquare, Users, Grid3X3, Clock, ChevronRight } from "lucide-react";
 import PromoForm from "./components/HomePageBanner";
 import HomePageBannerModal from "./components/BannerFormModal";
@@ -40,16 +39,14 @@ type DashboardStats = {
 };
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [conversationsData, setConversationsData] = useState<ConversationUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [convoCount, setConvoCount] = useState<number>(0);
   const [bannerOpen, setBannerOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isAdmin()) router.replace("/login");
-  }, []);
+  // Protect this route - require admin access
+  useProtectedRoute(true);
 
   useEffect(() => {
     async function loadStats() {
@@ -61,22 +58,30 @@ export default function DashboardPage() {
             Authorization: `Bearer ${token}`,
           },
         })
-        let convoData = await res.json();
-        console.log("convoData", convoData);
-        setConvoCount(convoData.total || 0)
+        
+        // Check response status first
+        if (!res.ok) {
+          console.warn("Failed to fetch conversations:", res.status);
+          setConvoCount(0);
+          setConversationsData([]);
+        } else {
+          let convoData = await res.json();
+          console.log("convoData", convoData);
+          setConvoCount(convoData.total || 0)
 
-        const conversations: ConversationUI[] = (convoData.conversations || []).map(
-          (item: ConversationApi) => ({
-            id: String(item.id),
-            userName: item.vendor_name ?? item.title,
-            lastMessage: item.description,
-            updatedAt: new Date(item.created_at).toLocaleString(),
-            unreadCount: item.messages?.filter((m: any) => !m.read).length ?? 0,
-          })
-        );
+          const conversations: ConversationUI[] = (convoData.conversations || []).map(
+            (item: ConversationApi) => ({
+              id: String(item.id),
+              userName: item.vendor_name ?? item.title,
+              lastMessage: item.description,
+              updatedAt: new Date(item.created_at).toLocaleString(),
+              unreadCount: item.messages?.filter((m: any) => !m.read).length ?? 0,
+            })
+          );
 
-        setStats(data);
-        setConversationsData(conversations);
+          setStats(data);
+          setConversationsData(conversations);
+        }
       } catch (error) {
         console.error(error);
 

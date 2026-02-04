@@ -2,6 +2,7 @@ import "./globals.css";
 import { Inter, Poppins } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -11,6 +12,14 @@ const poppins = Poppins({
 });
 
 const locales = ["en", "ar"];
+
+export const metadata: Metadata = {
+  title: "AJLA Admin Dashboard",
+  description: "Admin dashboard for AJLA",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
 
 export default async function RootLayout({
   children,

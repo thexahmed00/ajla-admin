@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isAdmin } from "../../lib/auth";
+import { useProtectedRoute } from "../../lib/useProtectedRoute";
 import { MessageSquare, Users, Grid3X3, Clock, ChevronRight, Send, X, } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
@@ -28,7 +27,6 @@ type ConversationUI = {
 };
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [stats, setStats] = useState<any>(null);
   const [conversationsData, setConversationsData] = useState<ConversationUI[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,9 +35,8 @@ export default function DashboardPage() {
   const [whatsappMessage, setWhatsappMessage] = useState("");
   const [activeConversation, setActiveConversation] = useState<ConversationUI | null>(null);
 
-  useEffect(() => {
-    if (!isAdmin()) router.replace("/login");
-  }, []);
+  // Protect this route - require admin access
+  useProtectedRoute(true);
 
   useEffect(() => {
     async function loadStats() {

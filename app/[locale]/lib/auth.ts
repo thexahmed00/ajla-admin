@@ -22,6 +22,10 @@ export function getUser() {
   }
 }
 
+export function isAuthenticated() {
+  return Boolean(getToken() && getUser());
+}
+
 export function isAdmin() {
   const user = getUser();
   return Boolean(user?.is_admin);

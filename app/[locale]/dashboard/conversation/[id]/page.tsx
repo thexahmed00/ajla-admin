@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useProtectedRoute } from "../../../lib/useProtectedRoute";
 import ChatMessage from "../../components/ChatMessage";
 import { Message } from "../../types/message";
 import { useParams } from "next/navigation";
@@ -13,7 +14,10 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [bookingNotes, setBookingNotes] = useState<string>("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-const [confirmLoading, setConfirmLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  // Protect this route - require admin access
+  useProtectedRoute(true);
 
   const conversationId = id; // <-- Use dynamic id from URL
 

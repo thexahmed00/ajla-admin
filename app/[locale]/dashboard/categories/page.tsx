@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useProtectedRoute } from "../../lib/useProtectedRoute";
 import { LayoutGrid, List, Grid3X3, Plus } from "lucide-react";
 import CategoryCard from "../components/CategoryCard";
 import AddCategoryModal from "../components/AddCategoryModal";
@@ -9,6 +10,9 @@ const PLACEHOLDER = "https://via.placeholder.com/150?text=No+Icon";
 const Categories = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [open, setOpen] = useState(false);
+
+  // Protect this route - require admin access
+  useProtectedRoute(true);
 
   interface Category {
     id: number;

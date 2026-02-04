@@ -2,6 +2,7 @@
 
 import { Star, Phone, Globe, MapPin, MessageCircle } from "lucide-react";
 import { use, useEffect, useState } from "react";
+import { useProtectedRoute } from "../../../lib/useProtectedRoute";
 import JetsMeta from "../../components/vendorinfo/JetsMeta";
 import { RestaurantMeta } from "../../components/vendorinfo/RestaurantsMeta";
 import { HotelMeta } from "../../components/vendorinfo/HotelsMeta";
@@ -14,6 +15,10 @@ export default function VendorDetailsUI() {
     const {id} = useParams();
 const [vendor, setVendor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Protect this route - require admin access
+  useProtectedRoute(true);
+  
   console.log("vendor id",id)
 useEffect(() => {
   if (!id) return;

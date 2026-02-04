@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useProtectedRoute } from "../../lib/useProtectedRoute";
 import BookingRow from "../components/BookingRow";
 
 interface BookingData {
@@ -19,6 +20,9 @@ export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [bookings, setBookings] = useState<BookingData[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Protect this route - require admin access
+  useProtectedRoute(true);
 
   async function fetchBookings(status: string) {
   try {
