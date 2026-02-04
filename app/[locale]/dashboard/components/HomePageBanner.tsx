@@ -87,6 +87,12 @@ export default function PromoForm({
 
   try {
     const authRes = await fetch("/api/imagekit-auth");
+    
+    if (!authRes.ok) {
+      const error = await authRes.json();
+      throw new Error(error.message || "Failed to get ImageKit authentication");
+    }
+
     const auth = await authRes.json();
 
     const formData = new FormData();
