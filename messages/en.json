@@ -1,0 +1,30 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "conversations": "Conversations",
+    "vendors": "Vendors",
+    "categories": "Categories",
+    "bookings": "Bookings",
+    "plans": "Plans",
+    "users": "Users",
+    "logout": "Logout"
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to AJLA Admin Panel",
+    "addBanner": "Add Home Banner",
+
+    "stats": {
+      "totalConversations": "Total Conversations",
+      "activeVendors": "Active Vendors",
+      "serviceCategories": "Service Categories",
+      "availability": "Availability"
+    },
+
+    "recentConversations": {
+      "title": "Recent Conversations",
+      "viewAll": "View All"
+    }
+  }
+}

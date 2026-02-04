@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+
+export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
     if (!id) {
@@ -12,40 +13,29 @@ export async function GET(request: Request) {
       );
     }
 
-    const token =
-      request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
-
-    if (!token) {
-      return NextResponse.json(
-        { message: "Unauthorized - Missing Token" },
-        { status: 401 }
-      );
-    }
-
     const res = await fetch(
-      `http://44.206.101.8/api/v1/admin/services/vendors/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        cache: "no-store",
-      }
+      `http://44.206.101.8/api/v1/services/vendors/${id}`,
+      { cache: "no-store" }
     );
-
-    const data = await res.json();
 
     if (!res.ok) {
       return NextResponse.json(
-        { message: data?.message || "Failed to fetch vendor", data },
+        { message: "Failed to fetch vendor" },
         { status: res.status }
       );
     }
 
+    const data = await res.json();
     return NextResponse.json(data);
-  } catch (err: any) {
+  } catch (error) {
+    console.error("Vendor fetch error:", error);
     return NextResponse.json(
-      { message: "Internal Server Error", error: err.message },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
 }
+
+
+
+

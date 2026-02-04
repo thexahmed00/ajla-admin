@@ -1,0 +1,30 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "conversations": "المحادثات",
+    "vendors": "البائعون",
+    "categories": "التصنيفات",
+    "bookings": "الحجوزات",
+    "plans": "الخطط",
+    "users": "المستخدمون",
+    "logout": "تسجيل الخروج"
+  },
+
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحبًا بك في لوحة إدارة أجلا",
+    "addBanner": "إضافة بانر الصفحة الرئيسية",
+
+    "stats": {
+      "totalConversations": "إجمالي المحادثات",
+      "activeVendors": "البائعون النشطون",
+      "serviceCategories": "فئات الخدمات",
+      "availability": "التوفر"
+    },
+
+    "recentConversations": {
+      "title": "أحدث المحادثات",
+      "viewAll": "عرض الكل"
+    }
+  }
+}
