@@ -9,11 +9,18 @@ const PLACEHOLDER = "https://via.placeholder.com/150?text=No+Icon";
 const Categories = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [open, setOpen] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  // ---------- NEW STATE FOR EDIT ----------
-  const [editingCategory, setEditingCategory] = useState<any | null>(null);
+  interface Category {
+    id: number;
+    slug: string;
+    name: string;
+    display_order: number;
+    icon_url: string;
+  }
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   const fetchCategories = async () => {
     try {

@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { MessageSquare, Phone, Mail, Clock } from "lucide-react";
 import { useParams } from "next/navigation";
 
-type ApiResponse = {
+type BookingData = {
     id: number;
     status: string;
     start_at_formatted: string;
@@ -37,6 +36,7 @@ type ApiResponse = {
         }[];
     };
 };
+
 export default function BookingDetails() {
     const data = {
         "id": 1,

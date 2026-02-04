@@ -2,11 +2,19 @@
 import { uploadToImageKit } from "@/app/[locale]/lib/imagekitUpload";
 import { useState, useEffect } from "react";
 
+interface CategoryForm {
+  id?: number;
+  slug: string;
+  name: string;
+  display_order: number;
+  icon_url: string;
+}
+
 interface AddCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
-  editingData: any | null;
+  onSubmit: (data: CategoryForm) => void;
+  editingData: CategoryForm | null;
 }
 
 export default function AddCategoryModal({
@@ -69,7 +77,7 @@ export default function AddCategoryModal({
         return;
       }
 
-      const isEdit = Boolean(editingData?.id);
+      const isEdit = Boolean(editingData && 'id' in editingData && editingData.id);
 
       const url = isEdit
         ? "/api/editcategory"
@@ -77,7 +85,7 @@ export default function AddCategoryModal({
 
       const method = isEdit ? "PUT" : "POST";
 
-      const payload = isEdit
+      const payload = isEdit && editingData
         ? {
           id: editingData.id,
           name: form.name.trim(),

@@ -32,9 +32,10 @@ export async function GET(request: Request) {
 
     // Return JSON directly
     return NextResponse.json(data);
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "Internal Server Error";
     return NextResponse.json(
-      { message: "Internal Server Error", error: err.message },
+      { message: "Internal Server Error", error: errorMessage },
       { status: 500 }
     );
   }

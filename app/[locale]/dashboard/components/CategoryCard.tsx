@@ -1,17 +1,8 @@
-import { LucideIcon, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { ChevronRight, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-import Boat from "../../../../public/icons/Boat.png";
-import CarDriver from "../../../public/icons/Car & Driver.png";
-import Car from "../../../../public/icons/Car.png";
-import Flight from "../../../../public/icons/Flight.png";
-import Hotel from "../../../../public/icons/Hotel.png";
-import PrivateJet from "../../../../public/icons/Private Jet.png";
-import Restaurant from "../../../../public/icons/Restaurant.png";
-
 
 interface CategoryCardProps {
-  id:number
+  id: number;
   icon: string;
   title: string;
   slug: string;
@@ -21,16 +12,6 @@ interface CategoryCardProps {
   onEdit?: (slug: string) => void;
   onDelete?: (slug: string) => void;
 }
-const CATEGORY_ICONS: Record<string, any> = {
-  restaurants: Restaurant,
-  hotels: Hotel,
-  jets: PrivateJet,
-  flights: Flight,
-  car_renting: Car,
-  car_driver: CarDriver,
-  boats: Boat,
-};
-
 
 const CategoryCard = ({
   id,
@@ -43,8 +24,6 @@ const CategoryCard = ({
   onEdit,
   onDelete,
 }: CategoryCardProps) => {
-  const IconImage = CATEGORY_ICONS[slug];
-
   return (
     <Link href={``}>
       <div className="group relative flex flex-col items-center rounded-xl border border-border bg-surface p-6 md:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-pointer overflow-hidden">

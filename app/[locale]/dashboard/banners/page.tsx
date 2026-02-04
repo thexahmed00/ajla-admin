@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import HomePageBannerModal from "../components/BannerFormModal";
-import { Pencil, Trash, Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import BannerEditModal from "../components/BannerEditModal";
 interface Banner {
     id: number;
@@ -22,7 +21,7 @@ const BannersPage = () => {
     const [loading, setLoading] = useState(false);
     const [bannerOpen, setBannerOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedBanner, setSelectedBanner] = useState<any>(null);
+    const [selectedBanner, setSelectedBanner] = useState<Banner | null>(null);
 
 
     const fetchBanners = async () => {
@@ -81,8 +80,9 @@ const handleDelete = async (id: number) => {
     await deleteBanner(id);
     alert("Banner deleted successfully");
     fetchBanners();
-  } catch (err: any) {
-    alert(err.message);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "Failed to delete banner";
+    alert(errorMessage);
   }
 };
 
@@ -177,11 +177,15 @@ const handleDelete = async (id: number) => {
             />
             <BannerEditModal
                 open={modalOpen}
-                initialData={selectedBanner}
+                initialData={selectedBanner || undefined}
                 onClose={() => setModalOpen(false)}
                 onSubmit={async (payload) => {
                     try {
                         const token = localStorage.getItem("access_token");
+
+                        if (!selectedBanner) {
+                            throw new Error("No banner selected");
+                        }
 
                         const res = await fetch("/api/updatebanner", {
                             method: "PUT",

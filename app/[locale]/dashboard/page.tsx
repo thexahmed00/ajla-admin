@@ -21,7 +21,7 @@ type ConversationApi = {
   vendor_name: string | null;
   vendor_image_url: string | null;
   created_at: string;
-  messages: any[];
+  messages: Array<{ read: boolean }>;
 };
 
 type ConversationUI = {
@@ -32,9 +32,16 @@ type ConversationUI = {
   unreadCount: number;
 };
 
+type DashboardStats = {
+  totalConversations: string;
+  activeVendors: string;
+  serviceCategories: string;
+  availability: string;
+};
+
 export default function DashboardPage() {
   const router = useRouter();
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [conversationsData, setConversationsData] = useState<ConversationUI[]>([]);
   const [loading, setLoading] = useState(true);
   const [convoCount, setConvoCount] = useState<number>(0);
@@ -56,9 +63,9 @@ export default function DashboardPage() {
         })
         let convoData = await res.json();
         console.log("convoData", convoData);
-        setConvoCount(convoData.total)
+        setConvoCount(convoData.total || 0)
 
-        const conversations: ConversationUI[] = convoData.conversations.map(
+        const conversations: ConversationUI[] = (convoData.conversations || []).map(
           (item: ConversationApi) => ({
             id: String(item.id),
             userName: item.vendor_name ?? item.title,

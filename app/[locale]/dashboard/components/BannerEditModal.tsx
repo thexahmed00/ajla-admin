@@ -34,11 +34,10 @@ export default function BannerEditModal({
         display_order: 0,
         is_active: true,
     });
-    const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [previewError, setPreviewError] = useState(false);
 
-    const handleFieldChange = (key: keyof BannerFormValues, value: any) => {
+    const handleFieldChange = (key: keyof BannerFormValues, value: string | number | boolean) => {
         setForm((prev) => ({
             ...prev,
             [key]: value,

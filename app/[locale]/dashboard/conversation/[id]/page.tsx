@@ -47,8 +47,9 @@ const [confirmLoading, setConfirmLoading] = useState(false);
         }));
 
         setMessages(fetchedMessages);
-      } catch (err) {
-        console.error("Failed to fetch messages", err);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to fetch messages";
+        console.error(errorMessage, err);
       }
     }
 
@@ -130,8 +131,9 @@ const [confirmLoading, setConfirmLoading] = useState(false);
     console.log("Booking confirmed successfully", res);
     setIsConfirmOpen(false);
     setBookingNotes("");
-  } catch (err) {
-    console.error("Failed to confirm booking", err);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "Failed to confirm booking";
+    console.error(errorMessage, err);
   } finally {
     setConfirmLoading(false);
   }

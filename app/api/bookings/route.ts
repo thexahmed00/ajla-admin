@@ -38,10 +38,11 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({ success: true, data }, { status: 200 });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "Internal Server Error";
     return NextResponse.json(
       {
-        message: err.message || "Internal Server Error",
+        message: errorMessage,
       },
       { status: 500 }
     );

@@ -2,10 +2,20 @@
 
 import PromoForm from "./HomePageBanner";
 
+interface BannerData {
+  id?: number;
+  title: string;
+  description: string;
+  image_url: string;
+  link_url?: string;
+  display_order?: number;
+  is_active?: boolean;
+}
+
 interface HomePageBannerModalProps {
   open: boolean;
   onClose: () => void;
-  initialData?: any;
+  initialData?: BannerData;
 }
 
 export default function HomePageBannerModal({

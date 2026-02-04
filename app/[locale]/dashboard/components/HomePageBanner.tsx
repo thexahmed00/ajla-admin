@@ -2,9 +2,18 @@
 
 import { useState } from "react";
 
+interface BannerFormData {
+  title: string;
+  description: string;
+  display_order: number;
+  image_url: string;
+  link_url: string;
+  is_active: boolean;
+}
+
 interface PromoFormProps {
-  initialData?: any;           // optional for edit
-  onSubmit: (data: any) => void;
+  initialData?: Partial<BannerFormData>;
+  onSubmit: (data: BannerFormData) => void;
   onCancel?: () => void;
   loading?: boolean;
 }
@@ -26,7 +35,7 @@ export default function PromoForm({
   const [uploading, setUploading] = useState(false);
 
 
-  const handleChange = (key: string, value: any) => {
+  const handleChange = (key: keyof BannerFormData, value: string | number | boolean) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -66,9 +75,10 @@ export default function PromoForm({
       // ✅ Success
       alert("Banner created successfully");
       onSubmit?.(data); // optional callback
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong";
       console.error(error);
-      alert(error.message || "Something went wrong");
+      alert(errorMessage);
     }
   };
 

@@ -37,7 +37,7 @@ export default function VendorsPage() {
 
         if (ignore) return;
 
-        const mapped: Vendor[] = data.vendors.map((v: any) => ({
+        const mapped: Vendor[] = data.vendors.map((v: { id: number; name: string; short_description: string; category_name: string; rating: number; thumbnail_url: string }) => ({
           id: v.id,
           name: v.name,
           description: v.short_description,
@@ -52,8 +52,9 @@ export default function VendorsPage() {
 
         // Stop if less than 20 returned
         if (mapped.length < LIMIT) setHasMore(false);
-      } catch (err) {
-        console.error(err);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load vendors";
+        console.error(errorMessage, err);
       } finally {
         if (!ignore) setLoading(false);
       }

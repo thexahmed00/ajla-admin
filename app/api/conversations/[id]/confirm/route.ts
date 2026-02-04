@@ -41,10 +41,11 @@ export async function POST(
     }
 
     return NextResponse.json(data, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Confirm Booking Error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { message: "Internal Server Error", error: error?.message },
+      { message: "Internal Server Error", error: errorMessage },
       { status: 500 }
     );
   }

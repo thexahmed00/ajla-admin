@@ -1,11 +1,19 @@
 "use client";
-import { Eye, Pencil, Trash2, CalendarDays, Clock, User } from "lucide-react";
+import { Eye, Trash2, CalendarDays, Clock } from "lucide-react";
 import Link from "next/link";
-interface BookingRowProps {
-    booking: any;
-    index: number;
+
+interface BookingData {
+  id: number;
+  created_at: string;
+  status: string;
+  [key: string]: unknown;
 }
-export default function BookingRow({ booking, index }: BookingRowProps) {
+
+interface BookingRowProps {
+  booking: BookingData;
+}
+
+export default function BookingRow({ booking }: BookingRowProps) {
     console.log("Booking", booking)
 
 

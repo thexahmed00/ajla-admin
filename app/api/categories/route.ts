@@ -61,10 +61,11 @@ export async function POST(request: Request) {
       { status: 201 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Create Category Error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { message: "Internal Server Error", error: error?.message },
+      { message: "Internal Server Error", error: errorMessage },
       { status: 500 }
     );
   }
@@ -112,10 +113,11 @@ export async function GET(request: Request) {
       { status: 200 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Fetch Categories Error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { message: "Internal Server Error", error: error?.message },
+      { message: "Internal Server Error", error: errorMessage },
       { status: 500 }
     );
   }

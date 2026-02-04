@@ -2,6 +2,13 @@
 import { useState, useEffect } from "react";
 import BookingRow from "../components/BookingRow";
 
+interface BookingData {
+  id: number;
+  created_at: string;
+  status: string;
+  [key: string]: unknown;
+}
+
 const TABS = [
   { key: "upcoming", label: "Upcoming" },
   { key: "completed", label: "Completed" },
@@ -10,7 +17,7 @@ const TABS = [
 
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState<BookingData[]>([]);
   const [loading, setLoading] = useState(false);
 
   async function fetchBookings(status: string) {
@@ -27,7 +34,7 @@ export default function BookingsPage() {
     const json = await res.json();
     console.log("Fetched bookings:", json);
     setBookings(Array.isArray(json?.data?.bookings) ? json.data.bookings : []);
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Failed fetching bookings", err);
   } finally {
     setLoading(false);
@@ -74,12 +81,13 @@ export default function BookingsPage() {
             ) : bookings.length === 0 ? (
               <tr><td className="p-6 text-center text-text-muted">No bookings found</td></tr>
             ) : (
-              bookings?.map((booking: any, idx: number) => (
-                <BookingRow key={booking.id}
-                
-            booking={booking} index={idx} 
-            />
-              ))
+              bookings?.map((booking: unknown) => {
+                const bookingData = booking as BookingData;
+                return (
+                <BookingRow key={bookingData.id}
+            booking={bookingData} />
+              );
+              })
             )}
           </tbody>
         </table>

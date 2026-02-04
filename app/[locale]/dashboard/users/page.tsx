@@ -44,7 +44,7 @@ export default function UsersPage() {
     useEffect(() => {
         fetchUsers();
     }, []);
-    const createUser = async (payload: any, token: string) => {
+    const createUser = async (payload: UserFormValues, token: string) => {
         const res = await fetch("/api/users", {
             method: "POST",
             headers: {
@@ -61,7 +61,7 @@ export default function UsersPage() {
         return res.json();
     };
 
-    const updateUser = async (payload: any, token: string) => {
+    const updateUser = async (payload: UserFormValues, token: string) => {
         console.log("payload", payload)
         const res = await fetch("/api/userupdate", {
             method: "PUT",
@@ -323,10 +323,7 @@ const deleteUser = async (id: number) => {
                         } else {
                             console.log("selectedUser",selectedUser?.id)
                             console.log("selectedUser",payload)
-                            await updateUser(
-                                { ...payload, id: selectedUser?.id },
-                                token
-                            );
+                            await updateUser(payload, token);
                         }
 
                         await fetchUsers();

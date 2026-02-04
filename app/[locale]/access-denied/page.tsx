@@ -1,5 +1,4 @@
-import { ShieldX, ArrowLeft } from "lucide-react";
-// import { Link } from "next/link";
+import { ShieldX } from "lucide-react";
 
 const AccessDenied = () => {
   return (
@@ -12,7 +11,7 @@ const AccessDenied = () => {
         <h1 className="text-3xl font-bold text-foreground mb-3">Access Denied</h1>
         
         <p className="text-muted-foreground mb-8">
-          You don't have permission to view this page. Please contact an administrator if you believe this is a mistake.
+          You don&apos;t have permission to view this page. Please contact an administrator if you believe this is a mistake.
         </p>
         
         {/* <Link

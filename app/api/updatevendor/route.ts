@@ -46,11 +46,11 @@ export async function PUT(req: Request) {
       { success: true, vendor: data },
       { status: 200 }
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("🔥 Update Vendor Error:", err);
-
+    const errorMessage = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { message: "Internal Server Error", error: err?.message },
+      { message: "Internal Server Error", error: errorMessage },
       { status: 500 }
     );
   }
