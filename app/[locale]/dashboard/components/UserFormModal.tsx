@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X, Eye, EyeOff } from "lucide-react";
+import { PlanTier } from "../types/plan";
 
 export interface UserFormValues {
     email: string;
@@ -10,10 +11,9 @@ export interface UserFormValues {
     full_name: string;
     phone_number: string;
     password?: string;
-    tier: number;
+    tier: PlanTier | null;
     is_active: boolean;
     is_admin: boolean;
-
 }
 
 interface UserFormModalProps {
@@ -37,7 +37,7 @@ export default function UserFormModal({
         last_name: "",
         full_name: "",
         phone_number: "",
-        tier: 0,
+        tier: null,
         is_active: true,
         is_admin: false,
     });
@@ -53,7 +53,7 @@ export default function UserFormModal({
                 last_name: initialData.last_name || "",
                 full_name: initialData.full_name || "",
                 phone_number: initialData.phone_number || "",
-                tier: initialData.tier || 0,
+                tier: initialData.tier || null,
                 is_active: initialData.is_active ?? true,
                 is_admin: initialData.is_admin ?? false,
             });
@@ -66,7 +66,7 @@ export default function UserFormModal({
                 last_name: "",
                 full_name: "",
                 phone_number: "",
-                tier: 0,
+                tier: null,
                 is_active: true,
                 is_admin: false,
             });
@@ -195,16 +195,17 @@ export default function UserFormModal({
                         <label className="text-sm font-medium text-text-main">
                             Tier
                         </label>
-                        <input
-                            type="text"
+                        <select
                             name="tier"
-                            placeholder="Tier "
-                            value={form.tier}
-                            onChange={handleChange}
-                            required
-                            className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none placeholder:text-muted-foreground/40"
-
-                        />
+                            value={form.tier ?? ''}
+                            onChange={(e) => setForm(prev => ({ ...prev, tier: e.target.value === '' ? null : e.target.value as PlanTier }))}
+                            className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                        >
+                            <option value="">No Tier</option>
+                            <option value="Lifestyle">Lifestyle</option>
+                            <option value="Traveller">Traveller</option>
+                            <option value="Elite">Elite</option>
+                        </select>
 
                         {/* Toggles */}
                         <div className="flex gap-6">

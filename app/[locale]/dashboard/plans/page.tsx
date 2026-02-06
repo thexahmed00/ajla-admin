@@ -267,7 +267,7 @@ export default function PlansPage() {
                                 {/* Tier */}
                                 <td className="px-6 py-4">
                                     <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/10">
-                                        Tier {plan.tier}
+                                        {plan.tier}
                                     </span>
                                 </td>
 
@@ -371,7 +371,7 @@ export default function PlansPage() {
 
                     <div>
                         <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/10">
-                            Tier {plan.tier}
+                            {plan.tier}
                         </span>
                     </div>
                 </div>
@@ -417,7 +417,7 @@ export default function PlansPage() {
                                 ...payload,
                                 price: Number(payload.price),
                                 duration_days: Number(payload.duration_days),
-                                tier: Number(payload.tier),
+                                tier: payload.tier,
                                 features: payload.features?.filter(Boolean),
                             });
                         } else {
@@ -428,7 +428,7 @@ export default function PlansPage() {
                                 ...payload,
                                 price: Number(payload.price),
                                 duration_days: Number(payload.duration_days),
-                                tier: Number(payload.tier),
+                                tier: payload.tier,
                                 features: payload.features?.filter(Boolean),
                             });
                         }
