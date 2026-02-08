@@ -9,8 +9,8 @@ export async function POST(request: Request) {
     const token = authHeader?.replace("Bearer ", "");
     console.log("Token Exists:", !!token);
 
-    const { name, icon_url } = body;
-
+    const { name, icon_url,category_id } = body;
+    console.log("server body",body)
     if (!name) {
       return NextResponse.json(
         { message: "Category name is required" },
@@ -25,6 +25,7 @@ export async function POST(request: Request) {
       .trim();
 
     const payload = {
+      category_id,
       slug,
       name: name.trim(),
       display_order: 0,

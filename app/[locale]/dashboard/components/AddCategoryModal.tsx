@@ -29,6 +29,13 @@ export default function AddCategoryModal({
     display_order: 0,
     icon_url: ""
   });
+  const [subCategory, setSubCategory] = useState({
+    name: "",
+    // slug: "",
+    display_order: 0,
+    icon_url: editingData?.icon_url
+  });
+
   // console.log("editing data",editingData.id)
   const [previewError, setPreviewError] = useState(false);
 
@@ -55,6 +62,20 @@ export default function AddCategoryModal({
 
     setPreviewError(false);
   }, [open, editingData]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (!editingData) {
+      setSubCategory({
+        // slug: "",
+        name: "",
+        display_order: 0,
+        icon_url: ""
+      });
+    }
+  }, [open, editingData]);
+
 
 
   const handleChange = (key: string, value: any) => {
@@ -125,6 +146,42 @@ export default function AddCategoryModal({
     }
   };
 
+  const [subCatLoading, setSubCatLoading] = useState(false);
+  async function createSubCategory() {
+    setSubCatLoading(true)
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      throw new Error("Unauthorized");
+    }
+    let payload = {
+      category_id: editingData?.id,
+      name: subCategory.name,
+      slug: subCategory?.name,
+      display_order: 0,
+      icon_url: editingData?.icon_url || ""
+    }
+    console.log("payload", payload)
+    const res = await fetch("/api/subcategories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    setSubCatLoading(false)
+
+    if (!res.ok) {
+      setSubCatLoading(false)
+      throw new Error(data?.message || "Failed to create subcategory");
+    }
+
+    return data;
+  }
+
 
 
 
@@ -179,6 +236,66 @@ export default function AddCategoryModal({
             />
           </div>
 
+
+          {editingData && (
+            <div className="border-t border-border pt-4 space-y-4">
+              <h3 className="text-sm font-semibold text-text-muted">
+                Add Subcategory
+              </h3>
+
+              {/* Subcategory Name */}
+              <div>
+                <label className="text-sm text-text-muted">Subcategory Name</label>
+                <input
+                  className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
+                  value={subCategory.name}
+                  onChange={(e) =>
+                    setSubCategory(prev => ({ ...prev, name: e.target.value }))
+                  }
+                  placeholder="Luxury Boats"
+                />
+              </div>
+
+              {/* Subcategory Slug */}
+              {/* <div>
+                <label className="text-sm text-text-muted">Slug</label>
+                <input
+                  className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
+                  value={subCategory.slug}
+                  onChange={(e) =>
+                    setSubCategory(prev => ({ ...prev, slug: e.target.value }))
+                  }
+                  placeholder="luxury-boats"
+                />
+              </div> */}
+
+              {/* Display Order */}
+              {/* <div>
+                <label className="text-sm text-text-muted">Display Order</label>
+                <input
+                  type="number"
+                  className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
+                  value={subCategory.display_order}
+                  onChange={(e) =>
+                    setSubCategory(prev => ({
+                      ...prev,
+                      display_order: Number(e.target.value)
+                    }))
+                  }
+                />
+              </div> */}
+            </div>
+          )}
+          {editingData && (
+            <button
+              type="button"
+              onClick={createSubCategory}
+              className="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition"
+            >
+              {subCatLoading ? "Submitting..." : "Add Subcategory"}
+            </button>
+          )}
+
           {/* Display Order */}
           {/* <div>
             <label className="text-sm text-text-muted">Display Order</label>
@@ -193,7 +310,7 @@ export default function AddCategoryModal({
 
           {/* Icon URL */}
           <div>
-            <label className="text-sm text-text-muted">Icon URL</label>
+            <label className="text-sm text-text-muted">Icon</label>
             {/* <input
               className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-1 focus:ring-primary outline-none"
               placeholder="https://icon.png"
@@ -219,7 +336,7 @@ export default function AddCategoryModal({
                   const imageUrl = await uploadToImageKit(e.target.files[0], {
                     folder: "/icons",
                   });
-                  console.log("url",imageUrl)
+                  console.log("url", imageUrl)
                   handleChange("icon_url", imageUrl);
                   setPreviewError(false);
                 } catch (err) {
