@@ -115,8 +115,9 @@ export default function AddCategoryModal({
         : {
           name: form.name.trim(),
           icon_url: form.icon_url.trim(),
+          category_ids: selectedIds
         };
-
+      console.log("payload", payload)
       const res = await fetch(url, {
         method,
         headers: {
@@ -134,8 +135,8 @@ export default function AddCategoryModal({
       }
 
       alert(isEdit ? "Category Updated Successfully" : "Category Created Successfully");
-
-      // onSubmit();   // refresh list
+       // refresh list
+      
       onClose();    // close modal
 
     } catch (err) {
@@ -172,15 +173,68 @@ export default function AddCategoryModal({
     });
 
     const data = await res.json();
+    // await loadMore(); 
+    
     setSubCatLoading(false)
 
     if (!res.ok) {
       setSubCatLoading(false)
       throw new Error(data?.message || "Failed to create subcategory");
     }
-
+    fetchSubcategories()
     return data;
   }
+
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [subLoading, setSubLoading] = useState(false);
+  const [openSubCat, setOpenSubCat] = useState(false);
+
+
+
+  const fetchSubcategories = async (page = 1) => {
+    const token = localStorage.getItem("access_token");
+
+    const res = await fetch(`/api/subcategories?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    const data = await res.json();
+    setSubcategories(data.subcategories || []);
+    if (!res.ok) throw new Error("Failed to load subcategories");
+
+    // return res.json();
+  };
+
+  useEffect(() => {
+    fetchSubcategories(page)
+  }, []);
+
+  // const loadMore = async () => {
+  //   if (loading) return;
+  //   setLoading(true);
+
+  //   const data = await fetchSubcategories(page);
+
+    // setSubcategories(prev => [
+    //   ...prev,
+    //   ...(data.subcategories || []),
+    // ]);
+
+  //   setPage(prev => prev + 1);
+  //   setLoading(false);
+  // };
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : [...prev, id]
+    );
+  };
 
 
 
@@ -235,6 +289,102 @@ export default function AddCategoryModal({
               required
             />
           </div>
+          {!editingData &&
+            <div className="relative w-full">
+  {/* Trigger */}
+  <button
+    type="button"
+    onClick={() => setOpenSubCat(v => !v)}
+    className="
+      w-full flex justify-between items-center
+      px-4 py-2 rounded-lg
+      border border-border bg-secondary
+      text-sm
+      hover:bg-secondary/80
+      bg-black/100
+    "
+  >
+    <span className="truncate">
+      {selectedIds.length > 0
+        ? `${selectedIds.length} subcategories selected`
+        : "Select subcategories"}
+    </span>
+
+    <span
+      className={`transition ${openSubCat ? "rotate-180" : ""}`}
+    >
+      ▼
+    </span>
+  </button>
+
+  {/* Dropdown */}
+  {openSubCat && (
+    <div
+      // onScroll={(e) => {
+      //   const el = e.currentTarget;
+      //   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
+      //     loadMore();
+      //   }
+      // }}
+      className="
+        absolute z-50 mt-2 w-full
+        max-h-64 overflow-y-auto
+        rounded-xl border border-border
+        bg-black/100 shadow-lg
+      "
+    >
+      {/* Header */}
+      <div className="sticky top-0 bg-secondary px-3 py-2 border-b border-border">
+        <p className="text-xs text-text-muted">
+          Sub Categories
+        </p>
+      </div>
+
+      {/* List */}
+      <div className="p-2 space-y-1">
+        {subcategories.length === 0 && !loading && (
+          <p className="text-sm text-text-muted text-center py-6">
+            No subcategories found
+          </p>
+        )}
+
+        {subcategories.map(item => {
+          const isSelected = selectedIds.includes(item.id);
+
+          return (
+            <label
+              key={item.id}
+              className={`
+                flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer
+                transition
+                ${isSelected
+                  ? "bg-primary/10 border border-primary/30"
+                  : "hover:bg-white/5"
+                }
+              `}
+            >
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => toggleSelect(item.id)}
+                className="h-4 w-4 text-primary"
+              />
+              <span className="text-sm">{item.name}</span>
+            </label>
+          );
+        })}
+
+        {loading && (
+          <div className="text-center py-3 text-xs text-text-muted animate-pulse">
+            Loading more…
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+</div>
+
+          }
 
 
           {editingData && (

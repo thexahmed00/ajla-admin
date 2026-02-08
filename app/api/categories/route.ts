@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const token = authHeader?.replace("Bearer ", "");
     console.log("Token Exists:", !!token);
 
-    const { name, icon_url,category_id } = body;
+    const { name, icon_url,category_id,category_ids } = body;
     console.log("server body",body)
     if (!name) {
       return NextResponse.json(
@@ -29,7 +29,8 @@ export async function POST(request: Request) {
       slug,
       name: name.trim(),
       display_order: 0,
-      icon_url: icon_url || ""
+      icon_url: icon_url || "",
+      category_ids: category_ids || []
     };
 
     console.log("Payload sent to backend:", payload);
@@ -88,7 +89,7 @@ export async function GET(request: Request) {
     }
 
     const res = await fetch(
-      "http://44.206.101.8/api/v1/services/categories",
+      "http://44.206.101.8/api/v1/admin/services/categories-with-subcategories",
       {
         method: "GET",
         headers: {
