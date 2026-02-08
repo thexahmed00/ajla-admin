@@ -5,6 +5,7 @@ import { Plus, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, CheckCircle, XCircle, Phone } from "lucide-react";
 import UserFormModal, { UserFormValues } from "../components/UserFormModal";
+import { PlanTier } from "../types/plan";
 
 interface UserType {
     id: number;
@@ -15,7 +16,7 @@ interface UserType {
     phone_number: string;
     is_active: boolean;
     is_admin: boolean;
-    tier: number;
+    tier: PlanTier | null;
     created_at: string;
     updated_at: string;
 }
@@ -192,7 +193,7 @@ const deleteUser = async (id: number) => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/10">
-                                        Tier {user.tier}
+                                        {user.tier ?? 'None'}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
@@ -277,7 +278,7 @@ const deleteUser = async (id: number) => {
                                 </div>
                                 <div>
                                     <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/10">
-                                        Tier {user.tier}
+                                        {user.tier ?? 'None'}
                                     </span>
                                 </div>
                             </div>

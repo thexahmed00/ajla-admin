@@ -147,17 +147,16 @@ export default function PlanFormModal({
             <label className="text-xs uppercase tracking-widest text-text-muted">
               Tier
             </label>
-            <input
-              type="number"
+            <select
               value={form.tier}
-              onChange={(e) =>
-                updateField(
-                  "tier",
-                  e.target.value === "" ? "" : Number(e.target.value)
-                )
-              }
+              onChange={(e) => updateField("tier", e.target.value)}
               className="w-full mt-1 px-4 py-2 border rounded-lg"
-            />
+            >
+              <option value="">Select Tier</option>
+              <option value="Lifestyle">Lifestyle</option>
+              <option value="Traveller">Traveller</option>
+              <option value="Elite">Elite</option>
+            </select>
           </div>
 
           {/* Features */}
