@@ -135,8 +135,8 @@ export default function AddCategoryModal({
       }
 
       alert(isEdit ? "Category Updated Successfully" : "Category Created Successfully");
-       // refresh list
-      
+      // refresh list
+
       onClose();    // close modal
 
     } catch (err) {
@@ -174,7 +174,7 @@ export default function AddCategoryModal({
 
     const data = await res.json();
     // await loadMore(); 
-    
+
     setSubCatLoading(false)
 
     if (!res.ok) {
@@ -190,6 +190,8 @@ export default function AddCategoryModal({
   const [page, setPage] = useState(1);
   const [subLoading, setSubLoading] = useState(false);
   const [openSubCat, setOpenSubCat] = useState(false);
+  const [showSubCatForm, setShowSubCatForm] = useState(false);
+
 
 
 
@@ -201,7 +203,7 @@ export default function AddCategoryModal({
         Authorization: `Bearer ${token}`,
       },
     });
-    
+
     const data = await res.json();
     setSubcategories(data.subcategories || []);
     if (!res.ok) throw new Error("Failed to load subcategories");
@@ -212,6 +214,12 @@ export default function AddCategoryModal({
   useEffect(() => {
     fetchSubcategories(page)
   }, []);
+  useEffect(() => {
+  if (!editingData) {
+    setShowSubCatForm(false);
+  }
+}, [editingData]);
+
 
   // const loadMore = async () => {
   //   if (loading) return;
@@ -219,10 +227,10 @@ export default function AddCategoryModal({
 
   //   const data = await fetchSubcategories(page);
 
-    // setSubcategories(prev => [
-    //   ...prev,
-    //   ...(data.subcategories || []),
-    // ]);
+  // setSubcategories(prev => [
+  //   ...prev,
+  //   ...(data.subcategories || []),
+  // ]);
 
   //   setPage(prev => prev + 1);
   //   setLoading(false);
@@ -291,11 +299,11 @@ export default function AddCategoryModal({
           </div>
           {!editingData &&
             <div className="relative w-full">
-  {/* Trigger */}
-  <button
-    type="button"
-    onClick={() => setOpenSubCat(v => !v)}
-    className="
+              {/* Trigger */}
+              <button
+                type="button"
+                onClick={() => setOpenSubCat(v => !v)}
+                className="
       w-full flex justify-between items-center
       px-4 py-2 rounded-lg
       border border-border bg-secondary
@@ -303,175 +311,158 @@ export default function AddCategoryModal({
       hover:bg-secondary/80
       bg-black/100
     "
-  >
-    <span className="truncate">
-      {selectedIds.length > 0
-        ? `${selectedIds.length} subcategories selected`
-        : "Select subcategories"}
-    </span>
+              >
+                <span className="truncate">
+                  {selectedIds.length > 0
+                    ? `${selectedIds.length} subcategories selected`
+                    : "Select subcategories"}
+                </span>
 
-    <span
-      className={`transition ${openSubCat ? "rotate-180" : ""}`}
-    >
-      ▼
-    </span>
-  </button>
+                <span
+                  className={`transition ${openSubCat ? "rotate-180" : ""}`}
+                >
+                  ▼
+                </span>
+              </button>
 
-  {/* Dropdown */}
-  {openSubCat && (
-    <div
-      // onScroll={(e) => {
-      //   const el = e.currentTarget;
-      //   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
-      //     loadMore();
-      //   }
-      // }}
-      className="
+              {/* Dropdown */}
+              {openSubCat && (
+                <div
+                  // onScroll={(e) => {
+                  //   const el = e.currentTarget;
+                  //   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
+                  //     loadMore();
+                  //   }
+                  // }}
+                  className="
         absolute z-50 mt-2 w-full
         max-h-64 overflow-y-auto
         rounded-xl border border-border
         bg-black/100 shadow-lg
       "
-    >
-      {/* Header */}
-      <div className="sticky top-0 bg-secondary px-3 py-2 border-b border-border">
-        <p className="text-xs text-text-muted">
-          Sub Categories
-        </p>
-      </div>
+                >
+                  {/* Header */}
+                  <div className="sticky top-0 bg-secondary px-3 py-2 border-b border-border">
+                    <p className="text-xs text-text-muted">
+                      Sub Categories
+                    </p>
+                  </div>
 
-      {/* List */}
-      <div className="p-2 space-y-1">
-        {subcategories.length === 0 && !loading && (
-          <p className="text-sm text-text-muted text-center py-6">
-            No subcategories found
-          </p>
-        )}
+                  {/* List */}
+                  <div className="p-2 space-y-1">
+                    {subcategories.length === 0 && !loading && (
+                      <p className="text-sm text-text-muted text-center py-6">
+                        No subcategories found
+                      </p>
+                    )}
 
-        {subcategories.map(item => {
-          const isSelected = selectedIds.includes(item.id);
+                    {subcategories.map(item => {
+                      const isSelected = selectedIds.includes(item.id);
 
-          return (
-            <label
-              key={item.id}
-              className={`
+                      return (
+                        <label
+                          key={item.id}
+                          className={`
                 flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer
                 transition
                 ${isSelected
-                  ? "bg-primary/10 border border-primary/30"
-                  : "hover:bg-white/5"
-                }
+                              ? "bg-primary/10 border border-primary/30"
+                              : "hover:bg-white/5"
+                            }
               `}
-            >
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={() => toggleSelect(item.id)}
-                className="h-4 w-4 text-primary"
-              />
-              <span className="text-sm">{item.name}</span>
-            </label>
-          );
-        })}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelect(item.id)}
+                            className="h-4 w-4 text-primary"
+                          />
+                          <span className="text-sm">{item.name}</span>
+                        </label>
+                      );
+                    })}
 
-        {loading && (
-          <div className="text-center py-3 text-xs text-text-muted animate-pulse">
-            Loading more…
-          </div>
-        )}
-      </div>
-    </div>
-  )}
-</div>
+                    {loading && (
+                      <div className="text-center py-3 text-xs text-text-muted animate-pulse">
+                        Loading more…
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
           }
 
 
           {editingData && (
-            <div className="border-t border-border pt-4 space-y-4">
-              <h3 className="text-sm font-semibold text-text-muted">
-                Add Subcategory
-              </h3>
+  <div className="pt-4 border-t border-border space-y-3">
+    {/* Toggle Button */}
+    <button
+      type="button"
+      onClick={() => setShowSubCatForm(prev => !prev)}
+      className="
+        w-full flex items-center justify-center gap-2
+        px-4 py-2 rounded-lg
+        border border-border
+        text-sm
+        hover:bg-secondary transition
+      "
+    >
+      {showSubCatForm ? "Cancel Subcategory" : "+ Add Subcategory"}
+    </button>
 
-              {/* Subcategory Name */}
-              <div>
-                <label className="text-sm text-text-muted">Subcategory Name</label>
-                <input
-                  className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
-                  value={subCategory.name}
-                  onChange={(e) =>
-                    setSubCategory(prev => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="Luxury Boats"
-                />
-              </div>
+    {/* Subcategory Form */}
+    {showSubCatForm && (
+      <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+        <h3 className="text-sm font-semibold text-text-muted">
+          Create Subcategory
+        </h3>
 
-              {/* Subcategory Slug */}
-              {/* <div>
-                <label className="text-sm text-text-muted">Slug</label>
-                <input
-                  className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
-                  value={subCategory.slug}
-                  onChange={(e) =>
-                    setSubCategory(prev => ({ ...prev, slug: e.target.value }))
-                  }
-                  placeholder="luxury-boats"
-                />
-              </div> */}
+        {/* Subcategory Name */}
+        <div>
+          <label className="text-sm text-text-muted">
+            Subcategory Name
+          </label>
+          <input
+            className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
+            value={subCategory.name}
+            onChange={(e) =>
+              setSubCategory(prev => ({
+                ...prev,
+                name: e.target.value
+              }))
+            }
+            placeholder="Enter Subcategory Name"
+          />
+        </div>
 
-              {/* Display Order */}
-              {/* <div>
-                <label className="text-sm text-text-muted">Display Order</label>
-                <input
-                  type="number"
-                  className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary"
-                  value={subCategory.display_order}
-                  onChange={(e) =>
-                    setSubCategory(prev => ({
-                      ...prev,
-                      display_order: Number(e.target.value)
-                    }))
-                  }
-                />
-              </div> */}
-            </div>
-          )}
-          {editingData && (
-            <button
-              type="button"
-              onClick={createSubCategory}
-              className="px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 transition"
-            >
-              {subCatLoading ? "Submitting..." : "Add Subcategory"}
-            </button>
-          )}
-
-          {/* Display Order */}
-          {/* <div>
-            <label className="text-sm text-text-muted">Display Order</label>
-            <input
-              type="number"
-              className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-1 focus:ring-primary outline-none"
-              value={form.display_order}
-              onChange={(e) => handleChange("display_order", e.target.value)}
-              required
-            />
-          </div> */}
+        {/* Submit */}
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={createSubCategory}
+            disabled={subCatLoading || !subCategory.name}
+            className="
+              px-4 py-2 rounded-lg
+              border border-primary
+              text-primary
+              hover:bg-primary/10
+              disabled:opacity-50 disabled:cursor-not-allowed
+              transition
+            "
+          >
+            {subCatLoading ? "Submitting..." : "Create Subcategory"}
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+)}
 
           {/* Icon URL */}
           <div>
             <label className="text-sm text-text-muted">Icon</label>
-            {/* <input
-              className="w-full mt-1 px-4 py-2 rounded-lg border border-border bg-secondary text-foreground focus:ring-1 focus:ring-primary outline-none"
-              placeholder="https://icon.png"
-              value={form.icon_url}
-              onChange={(e) => {
-                handleChange("icon_url", e.target.value);
-                setPreviewError(false);
-              }}
-            /> */}
-
-
             <input
               type="file"
               accept="image/*"
